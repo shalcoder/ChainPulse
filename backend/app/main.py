@@ -110,11 +110,17 @@ app.add_middleware(
 )
 
 # ── Routes ────────────────────────────────────────────────────────────────────
-# Routes are registered here as they are built in later phases.
-# Phase 1: health check only
-# Phase 2: /api/v1/predict
-# Phase 3: /api/v1/optimize
-# Phase 4: /api/v1/dashboard/stream (WebSocket)
+from app.api.routes import dashboard, events, predict, optimize
+
+app.include_router(dashboard.router, tags=["Dashboard"])
+app.include_router(events.router, tags=["Events"])
+app.include_router(predict.router, tags=["Predict"])
+app.include_router(optimize.router, tags=["Optimize"])
+
+# Load ML models at startup (after routes are registered)
+from app.services.prediction import eta_model, anomaly_model
+eta_model.load_model()
+anomaly_model.load_model()
 
 @app.get("/health", tags=["Health"])
 async def health_check():

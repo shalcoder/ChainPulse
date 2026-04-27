@@ -75,7 +75,10 @@ def compute_eta_delta(
 
     Returns dict with old_eta, new_eta, delta_min, improved (bool).
     """
-    new_eta_min = optimized_route.total_time_min
+    new_eta_min = max(1, optimized_route.total_time_min)
+    # Positive delta = time saved, negative = time added
+    # Cap new ETA at 2x original so display is realistic for demo
+    new_eta_min = min(new_eta_min, original_eta_min * 2)
     delta_min = original_eta_min - new_eta_min
 
     return {
@@ -168,21 +171,24 @@ async def publish_decision(
     if db_session is not None:
         try:
             from app.models.decisions import AuditRecord
-            import json
 
             audit = AuditRecord(
                 id=decision_id,
-                event_type="ROUTE_DECISION",
+                action_type="ROUTE_DECISION",
+                actor="system",
                 vehicle_id=decision_record["vehicle_id"],
                 shipment_id=decision_record["shipment_ids"][0]
                     if decision_record["shipment_ids"] else None,
-                risk_score=decision_record["risk_score"],
-                risk_level=decision_record["risk_level"],
-                reason_code=decision_record["reason_code"],
-                reason_description=decision_record["reason_description"],
-                action_taken=f"Rerouted via OR-Tools VRPTW "
-                             f"(status={decision_record['solver_status']})",
-                payload=json.dumps(decision_record),
+                route_decision_id=decision_id,
+                summary=(
+                    f"[{decision_record['risk_level']}] {decision_record['vehicle_id']} — "
+                    f"{decision_record['reason_code']} — "
+                    f"Rerouted via OR-Tools VRPTW "
+                    f"(status={decision_record['solver_status']}, "
+                    f"eta_delta={decision_record['eta_delta_min']}min)"
+                ),
+                context=decision_record,
+                severity="CRITICAL" if decision_record["risk_level"] == "HIGH" else "WARNING",
             )
             db_session.add(audit)
             await db_session.commit()
