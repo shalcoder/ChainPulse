@@ -1,0 +1,98 @@
+services:
+  # ── Zookeeper (Kafka coordinator) ──────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: scc_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - scc_network
+
+  # ── Kafka (event bus) ──────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: scc_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 2
+      KAFKA_MESSAGE_MAX_BYTES: 1000012
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 45s
+    networks:
+      - scc_network
+
+  # ── Kafka UI (browser-based topic viewer for demo) ─────────────────────────
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: scc_kafka_ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - scc_network
+
+  # ── PostgreSQL + PostGIS (operational store) ───────────────────────────────
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: scc_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: scc_user
+      POSTGRES_PASSWORD: scc_password
+      POSTGRES_DB: scc_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scc_user -d scc_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scc_network
+
+  # ── Redis (hot vehicle state cache) ───────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: scc_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scc_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  scc_network:
+    driver: bridge
