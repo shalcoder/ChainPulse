@@ -30,6 +30,8 @@ REASON_CODES = {
     "CAPACITY_REBALANCE":   "Vehicle capacity exceeded — load redistributed across fleet",
     "MANUAL_OVERRIDE":      "Operator manually triggered route optimization",
     "DEMO_INJECTION":       "Demo disruption event injected for demonstration",
+    "MULTI_FACTOR":         "Multiple compounding risk factors exceeded safe thresholds simultaneously",
+    "ROUTE_DEVIATION":      "Vehicle deviated significantly from planned route — reassignment triggered",
 }
 
 
@@ -45,25 +47,31 @@ def build_reason_code(
     contributed most to the risk score. Returns (code, description).
     """
     # Pick the dominant trigger factor
+    # Use raw values directly — each is already in [0,1] so they're comparable
     factors = {
-        "WEATHER_REROUTE":  weather_severity * 0.10,
-        "ANOMALY_DETECTED": anomaly_score * 0.25,
-        "HUB_CONGESTION":   hub_congestion * 0.15,
-        "SLA_BREACH_RISK":  sla_criticality * 0.20,
+        "WEATHER_REROUTE":  weather_severity,
+        "ANOMALY_DETECTED": anomaly_score,
+        "HUB_CONGESTION":   hub_congestion,
+        "SLA_BREACH_RISK":  sla_criticality,
     }
 
-    # Always label with HIGH_RISK_SCORE if score is above threshold
-    if risk_score >= 0.70:
-        dominant = max(factors, key=factors.get)
-        # Combine: primary reason + risk score context
-        description = (
-            f"{REASON_CODES[dominant]} "
-            f"[Risk Score: {risk_score:.2f}]"
-        )
-        return dominant, description
-
     dominant = max(factors, key=factors.get)
-    return dominant, REASON_CODES[dominant]
+    top_value = factors[dominant]
+    second_value = sorted(factors.values(), reverse=True)[1]
+
+    # If top two factors are within 0.10 of each other — MULTI_FACTOR
+    if top_value - second_value < 0.10 and risk_score >= 0.70:
+        description = (
+            f"Multiple compounding risk factors detected — "
+            f"weather={weather_severity:.2f}, anomaly={anomaly_score:.2f}, "
+            f"sla={sla_criticality:.2f} [Risk Score: {risk_score:.2f}]"
+        )
+        return "MULTI_FACTOR", description
+
+    description = (
+        f"{REASON_CODES[dominant]} [Risk Score: {risk_score:.2f}]"
+    )
+    return dominant, description
 
 
 def compute_eta_delta(

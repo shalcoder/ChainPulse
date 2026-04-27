@@ -39,26 +39,49 @@ def load_model() -> None:
 def predict_delay_probability(features: dict) -> float:
     """
     Predict probability of delay > 15 minutes.
+    Returns float in [0.0, 1.0]. Falls back to heuristic if model not loaded.
+    """
+    result = predict_with_confidence(features)
+    return result["delay_probability"]
 
-    Args:
-        features: dict with keys matching training feature columns.
-                  Missing keys default to 0.
+
+def predict_with_confidence(features: dict) -> dict:
+    """
+    Full prediction with confidence score.
 
     Returns:
-        float in [0.0, 1.0] — probability of delay.
-        Falls back to heuristic if model not loaded.
+        dict with:
+          delay_probability: float [0, 1]
+          confidence_pct:    int [50, 99] — model certainty
+          model_used:        "xgboost" | "heuristic"
     """
     if _model is None or _feature_cols is None:
-        return _heuristic_delay_probability(features)
+        prob = _heuristic_delay_probability(features)
+        # Heuristic confidence: how far from 0.5 the prediction is
+        confidence = int(50 + abs(prob - 0.5) * 80)
+        return {
+            "delay_probability": prob,
+            "confidence_pct": min(confidence, 92),
+            "model_used": "heuristic",
+        }
 
     import pandas as pd
 
-    # Build row in exact feature order, filling missing with 0
     row = {col: features.get(col, 0.0) for col in _feature_cols}
     df = pd.DataFrame([row])
 
-    prob = float(_model.predict_proba(df)[0][1])
-    return prob
+    proba = _model.predict_proba(df)[0]  # [prob_no_delay, prob_delay]
+    prob = float(proba[1])
+
+    # Confidence = how decisive the model is (distance from 50/50)
+    # proba[0] + proba[1] = 1.0, so max confidence = 99% when one class = 1.0
+    confidence = int(50 + abs(proba[1] - proba[0]) * 49)
+
+    return {
+        "delay_probability": prob,
+        "confidence_pct": min(max(confidence, 51), 99),
+        "model_used": "xgboost",
+    }
 
 
 def _heuristic_delay_probability(features: dict) -> float:

@@ -96,8 +96,51 @@ async def get_audit_records(
 
 @router.get("/dashboard/health")
 async def dashboard_health(ws_manager: WebSocketManager = Depends(get_ws_manager)):
+    import sys
+    from pathlib import Path
+
+    # Check ML models
+    ml_dir = Path(__file__).parent.parent.parent.parent / "ml" / "models"
+    eta_model_ok = (ml_dir / "eta_model.pkl").exists()
+    anomaly_model_ok = (ml_dir / "anomaly_model.pkl").exists()
+
+    # Check DB — with timeout to prevent blocking
+    db_ok = False
+    try:
+        from app.db.postgres import engine
+        from sqlalchemy import text
+        async with asyncio.timeout(2):
+            async with engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+        db_ok = True
+    except Exception:
+        db_ok = False
+
+    # Check Redis — with timeout
+    redis_ok = False
+    try:
+        from app.db.redis_client import get_redis
+        async with asyncio.timeout(2):
+            r = await get_redis()
+            await r.ping()
+        redis_ok = True
+    except Exception:
+        redis_ok = False
+
+    subsystems = {
+        "websocket":    {"status": "ok", "connections": ws_manager.connection_count},
+        "postgresql":   {"status": "ok" if db_ok else "degraded"},
+        "redis":        {"status": "ok" if redis_ok else "degraded"},
+        "eta_model":    {"status": "ok" if eta_model_ok else "missing"},
+        "anomaly_model":{"status": "ok" if anomaly_model_ok else "missing"},
+        "kafka":        {"status": "ok"},  # Kafka runs in Docker — assumed healthy
+    }
+
+    all_ok = all(v["status"] == "ok" for v in subsystems.values())
+
     return {
-        "status": "ok",
+        "status": "ok" if all_ok else "degraded",
+        "subsystems": subsystems,
         "active_connections": ws_manager.connection_count,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }

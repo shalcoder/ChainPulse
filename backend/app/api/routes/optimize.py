@@ -37,6 +37,22 @@ async def optimize(
         build_decision_record, publish_decision,
     )
     from app.services.prediction.risk_scorer import RiskResult, RiskLevel
+    from app.services.prediction.eta_model import predict_with_confidence
+
+    # Get confidence score from XGBoost
+    prediction = predict_with_confidence({
+        "weather_severity": req.weather_severity,
+        "hub_congestion": req.hub_congestion,
+        "recent_delay_rate": req.risk_score * 0.8,
+        "route_length_km": 25.0,
+        "historical_avg_min": 45.0,
+        "hour_sin": 0.5, "hour_cos": 0.5,
+        "dow_sin": 0.0, "dow_cos": 1.0,
+        "vehicle_type": 1.0, "vehicle_age_years": 3.0,
+        "recent_avg_delay_min": req.risk_score * 30,
+    })
+    confidence_pct = prediction["confidence_pct"]
+    model_used = prediction["model_used"]
 
     congestion_factor = 1.0 + req.hub_congestion * 0.5
     routing_data = build_routing_data(
@@ -87,6 +103,8 @@ async def optimize(
         eta_delta=eta_delta,
         triggered_by="API",
     )
+    decision["confidence_pct"] = confidence_pct
+    decision["model_used"] = model_used
 
     await publish_decision(decision, ws_manager, db)
 

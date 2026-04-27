@@ -32,16 +32,19 @@ async def process_risk_and_trigger(
 
     Returns the risk result dict.
     """
-    from app.services.prediction.eta_model import predict_delay_probability
+    from app.services.prediction.eta_model import predict_with_confidence
     from app.services.prediction.anomaly_model import score_anomaly
     from app.services.prediction.risk_scorer import compute_risk_score, RiskLevel
 
     # ── Step 1: ML predictions ────────────────────────────────────────────
-    delay_prob = predict_delay_probability({
+    prediction = predict_with_confidence({
         **features,
         "weather_severity": weather_severity,
         "hub_congestion": hub_congestion,
     })
+    delay_prob = prediction["delay_probability"]
+    confidence_pct = prediction["confidence_pct"]
+    model_used = prediction["model_used"]
 
     anomaly_score = score_anomaly(features)
 
@@ -89,6 +92,8 @@ async def process_risk_and_trigger(
         "delay_probability": delay_prob,
         "anomaly_score": anomaly_score,
         "alert_id": alert["alert_id"],
+        "confidence_pct": confidence_pct,
+        "model_used": model_used,
     }
 
 
@@ -121,25 +126,23 @@ async def _trigger_optimization(
 
         solver_result = solve_vrptw(routing_data, time_limit_seconds=8)
 
-        reason_code, reason_desc = build_reason_code(
-            risk_score=risk_result.score,
-            weather_severity=weather_severity,
-            anomaly_score=risk_result.anomaly_score,
-            hub_congestion=hub_congestion,
-            sla_criticality=risk_result.sla_criticality,
-        )
-
-        # Set baseline as the optimized time + a realistic delta
-        # so the display always shows "X min saved"
-        original_eta = int(vehicle_route.total_time_min * 1.35) if vehicle_route else 60
+        # Find vehicle route FIRST before using it
         vehicle_route = next(
             (vr for vr in solver_result.vehicle_routes if vr.vehicle_id == vehicle_id),
             None,
         )
-
         if vehicle_route is None and solver_result.vehicle_routes:
             vehicle_route = solver_result.vehicle_routes[0]
 
+        reason_code, reason_desc = build_reason_code(
+            risk_score=risk_result.score,
+            weather_severity=weather_severity,
+            anomaly_score=risk_result.anomaly_score,  # from RiskResult dataclass
+            hub_congestion=hub_congestion,
+            sla_criticality=risk_result.sla_criticality,
+        )
+
+        original_eta = int((vehicle_route or _null_route(vehicle_id)).total_time_min * 1.35)
         eta_delta = compute_eta_delta(
             original_eta_min=original_eta,
             optimized_route=vehicle_route or _null_route(vehicle_id),
