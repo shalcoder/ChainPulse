@@ -41,6 +41,8 @@ export interface RouteDecision {
   dropped_shipments: string[];
   solve_time_ms: number;
   triggered_by: string;
+  confidence_pct?: number;
+  model_used?: string;
 }
 
 export interface RiskAlert {
