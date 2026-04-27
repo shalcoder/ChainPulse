@@ -1,0 +1,98 @@
+"use client";
+
+import { RouteDecision } from "@/types";
+import { RiskBadge } from "@/components/ui/RiskBadge";
+import { formatTime } from "@/lib/utils";
+
+interface Props {
+  decision: RouteDecision | null;
+}
+
+export function DecisionPanel({ decision }: Props) {
+  if (!decision) {
+    return (
+      <div className="flex flex-col h-full">
+        <h2 className="text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3">
+          Latest Decision
+        </h2>
+        <div className="flex-1 flex items-center justify-center text-slate-600 text-xs font-mono">
+          — awaiting optimization trigger —
+        </div>
+      </div>
+    );
+  }
+
+  const saved = decision.eta_delta_min;
+
+  return (
+    <div className="flex flex-col h-full">
+      <h2 className="text-xs font-mono font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3">
+        Latest Decision
+      </h2>
+
+      <div className="space-y-3 flex-1">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-mono font-bold text-white">{decision.vehicle_id}</span>
+          <RiskBadge level={decision.risk_level} score={decision.risk_score} />
+        </div>
+
+        {/* ETA comparison */}
+        <div className="grid grid-cols-3 gap-2 p-3 bg-slate-900/60 rounded border border-slate-800">
+          <div className="text-center">
+            <div className="text-xs font-mono text-slate-500 mb-1">OLD ETA</div>
+            <div className="text-sm font-mono font-bold text-slate-400 line-through">
+              {decision.old_eta_min}m
+            </div>
+          </div>
+          <div className="text-center flex flex-col items-center justify-center">
+            <div className={`text-xs font-mono font-bold ${saved > 0 ? "text-green-400" : "text-red-400"}`}>
+              {saved > 0 ? `−${saved}m` : `+${Math.abs(saved)}m`}
+            </div>
+            <div className="text-xs text-slate-600">saved</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xs font-mono text-slate-500 mb-1">NEW ETA</div>
+            <div className="text-sm font-mono font-bold text-green-400">
+              {decision.new_eta_min}m
+            </div>
+          </div>
+        </div>
+
+        {/* Reason */}
+        <div className="p-2.5 bg-slate-900/40 rounded border border-amber-900/40">
+          <div className="text-xs font-mono text-amber-500 font-bold mb-1">
+            {decision.reason_code}
+          </div>
+          <div className="text-xs font-mono text-slate-400 leading-relaxed">
+            {decision.reason_description}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
+            <div className="text-slate-500">Solver</div>
+            <div className="text-slate-200 font-bold">{decision.solver_status}</div>
+          </div>
+          <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
+            <div className="text-slate-500">Solve time</div>
+            <div className="text-slate-200 font-bold">{decision.solve_time_ms}ms</div>
+          </div>
+          <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
+            <div className="text-slate-500">Distance</div>
+            <div className="text-slate-200 font-bold">{decision.total_distance_km}km</div>
+          </div>
+          <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
+            <div className="text-slate-500">Stops</div>
+            <div className="text-slate-200 font-bold">{decision.route_stops.length}</div>
+          </div>
+        </div>
+
+        <div className="text-xs font-mono text-slate-600">
+          {formatTime(decision.timestamp)} · {decision.triggered_by}
+        </div>
+      </div>
+    </div>
+  );
+}
