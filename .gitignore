@@ -1,0 +1,22 @@
+﻿# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/ml/models/*.pkl
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# Docker
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
