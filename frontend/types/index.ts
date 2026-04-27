@@ -73,7 +73,34 @@ export interface FleetMetrics {
   active_alerts: number;
 }
 
-export interface WebSocketMessage {
-  type: "ROUTE_DECISION" | "RISK_ALERT" | "VEHICLE_UPDATE" | "FLEET_METRICS";
-  payload: RouteDecision | RiskAlert | VehiclePosition | FleetMetrics;
-}
+export type WebSocketMessage =
+  | {
+    type: "CONNECTED";
+    payload: {
+      message: string;
+      timestamp: string;
+      connections: number;
+    };
+  }
+  | {
+    type: "HEARTBEAT";
+    payload: {
+      timestamp: string;
+    };
+  }
+  | {
+    type: "ROUTE_DECISION";
+    payload: RouteDecision;
+  }
+  | {
+    type: "RISK_ALERT";
+    payload: RiskAlert;
+  }
+  | {
+    type: "VEHICLE_UPDATE";
+    payload: VehiclePosition;
+  }
+  | {
+    type: "FLEET_METRICS";
+    payload: FleetMetrics;
+  };

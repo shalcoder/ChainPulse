@@ -64,7 +64,7 @@ export function computeFleetMetrics(vehicles: VehiclePosition[]): FleetMetrics {
     high_risk_count: vehicles.filter(v => v.risk_level === "HIGH").length,
     medium_risk_count: vehicles.filter(v => v.risk_level === "MEDIUM").length,
     low_risk_count: vehicles.filter(v => v.risk_level === "LOW").length,
-    reroutes_today: 0,
+    reroutes_today: vehicles.filter(v => v.risk_level === "HIGH").length,
     sla_hit_rate: 94.2,
     avg_eta_saved_min: 0,
     active_alerts: vehicles.filter(v => v.risk_level !== "LOW").length,

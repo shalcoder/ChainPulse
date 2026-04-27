@@ -6,6 +6,7 @@ import { RiskAlert, RouteDecision, WebSocketMessage } from "@/types";
 export function useAlerts(lastMessage: WebSocketMessage | null) {
   const [alerts, setAlerts] = useState<RiskAlert[]>([]);
   const [decisions, setDecisions] = useState<RouteDecision[]>([]);
+  const [reroutes, setReroutes] = useState(0);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -18,6 +19,7 @@ export function useAlerts(lastMessage: WebSocketMessage | null) {
     if (lastMessage.type === "ROUTE_DECISION") {
       const decision = lastMessage.payload as RouteDecision;
       setDecisions((prev) => [decision, ...prev].slice(0, 20));
+      setReroutes((prev) => prev + 1);
 
       // Also create a synthetic alert from the decision
       const syntheticAlert: RiskAlert = {
@@ -34,5 +36,5 @@ export function useAlerts(lastMessage: WebSocketMessage | null) {
     }
   }, [lastMessage]);
 
-  return { alerts, decisions };
+  return { alerts, decisions, reroutes };
 }

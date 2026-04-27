@@ -5,6 +5,7 @@ import { FleetMetrics } from "@/types";
 interface Props {
   metrics: FleetMetrics;
   connected: boolean;
+  reroutes: number;
 }
 
 function Metric({ label, value, unit, accent }: {
@@ -20,7 +21,7 @@ function Metric({ label, value, unit, accent }: {
   );
 }
 
-export function MetricsSummary({ metrics, connected }: Props) {
+export function MetricsSummary({ metrics, connected, reroutes }: Props) {
   return (
     <div className="flex items-center gap-2">
       {/* Connection status */}
@@ -37,7 +38,7 @@ export function MetricsSummary({ metrics, connected }: Props) {
         <Metric label="Medium" value={metrics.medium_risk_count} accent="text-orange-400" />
         <Metric label="Alerts" value={metrics.active_alerts} accent="text-amber-400" />
         <Metric label="SLA Hit" value={metrics.sla_hit_rate.toFixed(1)} unit="%" accent="text-cyan-400" />
-        <Metric label="Reroutes" value={metrics.reroutes_today} accent="text-violet-400" />
+        <Metric label="Reroutes" value={reroutes} accent="text-violet-400" />
       </div>
     </div>
   );

@@ -69,6 +69,32 @@ export function DecisionPanel({ decision }: Props) {
           </div>
         </div>
 
+        {/* Risk score breakdown bar */}
+        <div className="p-2.5 bg-slate-900/40 rounded border border-slate-800">
+          <div className="text-xs font-mono text-slate-500 mb-2 tracking-widest">
+            RISK BREAKDOWN
+          </div>
+          {[
+            { label: "DELAY",   value: decision.risk_score * 0.45, color: "bg-red-500",    width: Math.round(decision.risk_score * 45) },
+            { label: "ANOMALY", value: decision.risk_score * 0.25, color: "bg-orange-500", width: Math.round(decision.risk_score * 25) },
+            { label: "SLA",     value: decision.risk_score * 0.20, color: "bg-amber-500",  width: Math.round(decision.risk_score * 20) },
+            { label: "WEATHER", value: decision.risk_score * 0.10, color: "bg-blue-500",   width: Math.round(decision.risk_score * 10) },
+          ].map(({ label, value, color, width }) => (
+            <div key={label} className="flex items-center gap-2 mb-1">
+              <div className="text-xs font-mono text-slate-500 w-14 shrink-0">{label}</div>
+              <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${color} rounded-full transition-all duration-700`}
+                  style={{ width: `${Math.min(width * 1.1, 100)}%` }}
+                />
+              </div>
+              <div className="text-xs font-mono text-slate-400 w-8 text-right">
+                {value.toFixed(2)}
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-2 gap-2 text-xs font-mono">
           <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
@@ -76,8 +102,8 @@ export function DecisionPanel({ decision }: Props) {
             <div className="text-slate-200 font-bold">{decision.solver_status}</div>
           </div>
           <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
-            <div className="text-slate-500">Solve time</div>
-            <div className="text-slate-200 font-bold">{decision.solve_time_ms}ms</div>
+            <div className="text-slate-500">OR-Tools</div>
+            <div className="text-cyan-400 font-bold">{decision.solve_time_ms}ms</div>
           </div>
           <div className="p-2 bg-slate-900/40 rounded border border-slate-800">
             <div className="text-slate-500">Distance</div>

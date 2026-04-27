@@ -9,13 +9,15 @@ import { RiskAlertFeed } from "@/components/panels/RiskAlertFeed";
 import { FleetStatusPanel } from "@/components/panels/FleetStatusPanel";
 import { DecisionPanel } from "@/components/panels/DecisionPanel";
 import { ControlTowerMap } from "@/components/map/ControlTowerMap";
+import { EventTicker } from "@/components/panels/EventTicker";
+import { DemoLauncher } from "@/components/panels/DemoLauncher";
 import { computeFleetMetrics } from "@/lib/utils";
 import { RouteDecision } from "@/types";
 
 export default function Dashboard() {
   const { connected, lastMessage } = useWebSocket();
   const { vehicles } = useFleetState(lastMessage);
-  const { alerts, decisions } = useAlerts(lastMessage);
+  const { alerts, decisions, reroutes } = useAlerts(lastMessage);
 
   const metrics = useMemo(() => computeFleetMetrics(vehicles), [vehicles]);
   const latestDecision: RouteDecision | null = decisions[0] ?? null;
@@ -53,23 +55,26 @@ export default function Dashboard() {
             </span>
           </div>
 
-          <div className="text-xs font-mono text-slate-600 tracking-widest">
-            {dateDisplay}
+          <div className="flex items-center gap-4">
+            <DemoLauncher />
+            <div className="text-xs font-mono text-slate-600 tracking-widest">
+              {dateDisplay}
+            </div>
           </div>
         </div>
 
         {/* Metrics bar */}
-        <MetricsSummary metrics={metrics} connected={connected} />
+        <MetricsSummary metrics={metrics} connected={connected} reroutes={reroutes} />
       </header>
 
       {/* ── Main grid ───────────────────────────────────────────────── */}
-      <main className="flex-1 grid grid-cols-[1fr_280px] grid-rows-1 gap-0 overflow-hidden">
+      <main className="flex-1 grid grid-cols-[1fr_280px] grid-rows-1 gap-0 overflow-hidden min-h-0">
 
         {/* Left: Map + Decision */}
-        <div className="grid grid-rows-[1fr_200px] gap-0 overflow-hidden border-r border-slate-800">
+        <div className="grid grid-rows-[1fr_220px] gap-0 overflow-hidden border-r border-slate-800 min-h-0">
 
           {/* Map */}
-          <div className="p-3 overflow-hidden">
+          <div className="p-3 overflow-hidden min-h-0">
             <div className="h-full rounded-lg overflow-hidden">
               <ControlTowerMap
                 vehicles={vehicles}
@@ -79,14 +84,14 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Decision panel */}
-          <div className="border-t border-slate-800 p-3 overflow-hidden">
+          {/* Decision panel — taller to fit breakdown bar */}
+          <div className="border-t border-slate-800 p-3 overflow-y-auto">
             <DecisionPanel decision={latestDecision} />
           </div>
         </div>
 
         {/* Right: Alert feed + Fleet status */}
-        <div className="grid grid-rows-[1fr_1fr] overflow-hidden">
+        <div className="grid grid-rows-[1fr_1fr] overflow-hidden min-h-0">
 
           {/* Alert feed */}
           <div className="border-b border-slate-800 p-3 overflow-hidden">
@@ -99,6 +104,10 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* ── Event ticker — full width bottom bar ────────────────────── */}
+      <EventTicker lastMessage={lastMessage} />
+
     </div>
   );
 }
