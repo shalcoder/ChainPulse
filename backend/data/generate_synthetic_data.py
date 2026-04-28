@@ -18,9 +18,13 @@ import math
 import random
 import os
 import sys
+from pathlib import Path
 import uuid
 from datetime import datetime, timedelta
 from typing import Optional
+
+# Add the backend directory to sys.path so we can import 'app'
+sys.path.append(str(Path(__file__).parent.parent))
 
 import asyncpg
 from aiokafka import AIOKafkaProducer
@@ -115,6 +119,15 @@ def _random_point_near(lat: float, lon: float, radius_km: float = 10.0):
 
 async def seed_database() -> None:
     """Populate PostgreSQL with hubs, vehicles, and shipments."""
+    print("Ensuring database tables are created...")
+    try:
+        from app.db.postgres import create_all_tables
+        await create_all_tables()
+        print("  Tables ready.")
+    except Exception as e:
+        print(f"  Warning: Could not create tables via app models: {e}")
+        print("  Proceeding with raw seed (may fail if tables don't exist)...")
+
     print("Connecting to PostgreSQL...")
     conn = await asyncpg.connect(POSTGRES_DSN)
 
