@@ -16,6 +16,7 @@ import asyncio
 import json
 import math
 import random
+import os
 import sys
 import uuid
 from datetime import datetime, timedelta
@@ -25,11 +26,12 @@ import asyncpg
 from aiokafka import AIOKafkaProducer
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-POSTGRES_DSN = "postgresql://scc_user:scc_password@localhost:5432/scc_db"
-KAFKA_BOOTSTRAP = "localhost:9092"
-GPS_INTERVAL_SECONDS = 2.0
-FLEET_SIZE = 20
-SHIPMENT_COUNT = 100
+# Fallback to environment variables if present (useful for Render/Docker)
+POSTGRES_DSN = os.getenv("DATABASE_URL", "postgresql://scc_user:scc_password@localhost:5432/scc_db")
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+GPS_INTERVAL_SECONDS = float(os.getenv("GPS_UPDATE_INTERVAL_SECONDS", "2.0"))
+FLEET_SIZE = int(os.getenv("FLEET_SIZE", "20"))
+SHIPMENT_COUNT = int(os.getenv("SHIPMENT_COUNT", "100"))
 
 # ── Bengaluru Hub Locations ───────────────────────────────────────────────────
 HUB_DEFINITIONS = [
