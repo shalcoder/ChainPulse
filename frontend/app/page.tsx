@@ -12,6 +12,8 @@ import { TopBar } from "@/components/panels/TopBar";
 import { EventTicker } from "@/components/panels/EventTicker";
 import { computeFleetMetrics } from "@/lib/utils";
 import { RouteDecision } from "@/types";
+import { OnboardingTooltip } from "@/components/ui/OnboardingTooltip";
+import { DemoProgressOverlay } from "@/components/ui/DemoProgressOverlay";
 
 export default function Dashboard() {
   const { connected, lastMessage } = useWebSocket();
@@ -26,6 +28,7 @@ export default function Dashboard() {
 
   // Mobile bottom sheet state — which panel is open on small screens
   const [mobilePanel, setMobilePanel] = useState<"none" | "fleet" | "alerts">("none");
+  const [demoRunning, setDemoRunning] = useState(false);
 
   useEffect(() => {
     setDateDisplay(
@@ -54,10 +57,19 @@ export default function Dashboard() {
     >
       {!booted && <BootScreen onComplete={handleBootComplete} />}
 
+      {/* Onboarding — shown once on first visit */}
+      <OnboardingTooltip />
+
+      {/* Demo progress overlay — shown while demo runs */}
+      <DemoProgressOverlay
+        running={demoRunning}
+        onComplete={() => setDemoRunning(false)}
+      />
+
       {/* ── Top bar ─────────────────────────────────────────────── */}
       {/* On mobile, add left padding so it doesn't clash with the
           floating hamburger button from AppShell */}
-      <div className="sm:pl-0 pl-12">
+      <div id="onboard-demo" className="sm:pl-0 pl-12">
         <TopBar
           connected={connected}
           metrics={metrics}
@@ -79,6 +91,7 @@ export default function Dashboard() {
 
           {/* Map — fixed height on mobile, flex-1 on desktop */}
           <div
+            id="onboard-map"
             className="w-full shrink-0 md:flex-1 md:shrink md:h-auto overflow-hidden"
             style={{ height: "55vw", maxHeight: "420px" }}
           >
@@ -204,7 +217,7 @@ export default function Dashboard() {
         </div>
 
         {/* Right panel — lg+ only */}
-        <div className="hidden lg:flex">
+        <div id="onboard-alerts" className="hidden lg:flex">
           <RightPanel
             alerts={alerts}
             latestDecision={latestDecision}

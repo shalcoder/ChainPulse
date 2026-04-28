@@ -57,6 +57,65 @@ function exportCSV(records: AuditRecord[]) {
   URL.revokeObjectURL(url);
 }
 
+function printReport(records: AuditRecord[]) {
+  const rows = records
+    .map(
+      (r) => `
+      <tr>
+        <td>${r.created_at ? new Date(r.created_at).toLocaleString() : "—"}</td>
+        <td>${r.vehicle_id}</td>
+        <td>${r.risk_level}</td>
+        <td>${(r.risk_score * 100).toFixed(1)}%</td>
+        <td>${r.reason_code}</td>
+        <td>${r.reason_description || "—"}</td>
+        <td>${r.action_taken || "—"}</td>
+      </tr>`
+    )
+    .join("");
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>ChainPulse Audit Report</title>
+      <style>
+        body { font-family: monospace; font-size: 11px; color: #0f172a; padding: 24px; }
+        h1 { font-size: 18px; margin-bottom: 4px; }
+        p { color: #64748b; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; text-align: left; padding: 6px 10px;
+             border: 1px solid #e2e8f0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+        td { padding: 6px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .high   { color: #ef4444; font-weight: bold; }
+        .medium { color: #f97316; font-weight: bold; }
+        .low    { color: #22c55e; font-weight: bold; }
+        @media print { body { padding: 0; } }
+      </style>
+    </head>
+    <body>
+      <h1>ChainPulse — Decision Audit Report</h1>
+      <p>Generated: ${new Date().toLocaleString()} · ${records.length} decisions</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th><th>Vehicle</th><th>Risk Level</th>
+            <th>Score</th><th>Reason Code</th><th>Description</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </body>
+    </html>`;
+
+  const win = window.open("", "_blank");
+  if (!win) return;
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 400);
+}
+
 function TimelineEntry({ rec, isLast }: { rec: AuditRecord; isLast: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const meta = getReasonMeta(rec.reason_code);
