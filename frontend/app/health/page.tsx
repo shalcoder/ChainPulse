@@ -373,7 +373,8 @@ export default function HealthPage() {
   const fetchHealth = useCallback(async () => {
     const t0 = performance.now();
     try {
-      const res = await fetch("http://localhost:8000/dashboard/health", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/dashboard/health`, {
         signal: AbortSignal.timeout(4000),
       });
       const json: HealthResponse = await res.json();

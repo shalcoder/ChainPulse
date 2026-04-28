@@ -394,7 +394,8 @@ export default function AuditPage() {
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   const fetchRecords = () => {
-    fetch("http://localhost:8000/dashboard/audit")
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    fetch(`${API_URL}/dashboard/audit`)
       .then((r) => r.json())
       .then((data) => { setRecords(data); setLoading(false); })
       .catch(() => setLoading(false));

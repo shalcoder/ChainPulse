@@ -14,7 +14,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useKeyboardShortcuts({
     onThemeToggle: toggleTheme,
     onDemoStart: () => {
-      fetch("http://localhost:8000/demo/start", { method: "POST" }).catch(() => {});
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      fetch(`${API_URL}/demo/start`, { method: "POST" }).catch(() => {});
     },
   });
   const overlayRef = useRef<HTMLDivElement>(null);

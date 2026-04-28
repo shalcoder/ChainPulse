@@ -20,7 +20,8 @@ export function DemoLauncher({ onStateChange }: Props) {
   async function handleStart() {
     if (state === "running") return;
     try {
-      const res = await fetch("http://localhost:8000/demo/start", { method: "POST" });
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/demo/start`, { method: "POST" });
       const data = await res.json();
       if (data.status === "already_running") { updateState("running"); return; }
       updateState("running");
