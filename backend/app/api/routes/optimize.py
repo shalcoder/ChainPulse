@@ -1,6 +1,7 @@
 """POST /optimize — run OR-Tools VRPTW on demand."""
 
 import logging
+import asyncio
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -107,5 +108,26 @@ async def optimize(
     decision["model_used"] = model_used
 
     await publish_decision(decision, ws_manager, db)
+
+    # Feature 1: Trigger Gemini asynchronously to update the Decision Panel
+    async def fetch_and_publish_gemini():
+        try:
+            from app.services.dispatch.gemini_narrator import generate_dispatch_instructions
+            import asyncio
+            
+            gemini_response = await generate_dispatch_instructions(decision)
+            decision["gemini_driver_instruction"] = gemini_response.get("driver_instruction")
+            decision["gemini_judge_explanation"] = gemini_response.get("judge_explanation")
+            
+            # Broadcast the enriched decision over WebSocket
+            await ws_manager.broadcast({
+                "type": "ROUTE_DECISION",
+                "payload": decision
+            })
+        except Exception as e:
+            logger.error(f"Gemini narrator failed: {e}")
+
+    import asyncio
+    asyncio.create_task(fetch_and_publish_gemini())
 
     return {"status": "optimized", "decision": decision}

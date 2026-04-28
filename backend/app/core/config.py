@@ -124,6 +124,9 @@ class Settings(BaseSettings):
     ANOMALY_DWELL_THRESHOLD_MINUTES: int = 30  # Flag if stopped > 30 min
     GPS_JUMP_THRESHOLD_KM: float = 5.0  # Flag if position jumps > 5 km in 1 tick
 
+    # ── Gemini ────────────────────────────────────────────────────────────────
+    GEMINI_API_KEY: str = ""
+
 
 @lru_cache()
 def get_settings() -> Settings:

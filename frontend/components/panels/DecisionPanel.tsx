@@ -118,6 +118,36 @@ export function DecisionPanel({ decision }: Props) {
         <div className="text-xs font-mono text-slate-600">
           {formatTime(decision.timestamp)} · {decision.triggered_by}
         </div>
+
+        {/* Gemini Dispatch Section */}
+        {(decision.gemini_driver_instruction || decision.gemini_judge_explanation) && (
+          <div className="mt-3 p-3 bg-slate-900/80 rounded border border-indigo-500/30 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-indigo-400 uppercase">
+                ✦ Gemini Dispatch
+              </span>
+            </div>
+            
+            {decision.gemini_driver_instruction && (
+              <div className="mb-2">
+                <div className="text-[9px] text-slate-500 font-mono mb-0.5">DRIVER INSTRUCTION</div>
+                <div className="text-xs text-slate-300 italic">
+                  "{decision.gemini_driver_instruction}"
+                </div>
+              </div>
+            )}
+            
+            {decision.gemini_judge_explanation && (
+              <div>
+                <div className="text-[9px] text-slate-500 font-mono mb-0.5">SYSTEM EXPLANATION</div>
+                <div className="text-xs text-indigo-200">
+                  {decision.gemini_judge_explanation}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

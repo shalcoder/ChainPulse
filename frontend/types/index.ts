@@ -43,6 +43,8 @@ export interface RouteDecision {
   triggered_by: string;
   confidence_pct?: number;
   model_used?: string;
+  gemini_driver_instruction?: string;
+  gemini_judge_explanation?: string;
 }
 
 export interface RiskAlert {
