@@ -14,7 +14,7 @@ const STEPS: TooltipStep[] = [
     targetId: "onboard-map",
     title: "Live Fleet Map",
     body: "20 vehicles moving in real time. Colors show risk level — green is safe, orange is medium risk, red needs immediate action.",
-    position: "bottom",
+    position: "top",
   },
   {
     targetId: "onboard-alerts",
@@ -85,7 +85,7 @@ function TooltipBox({
         style.right = window.innerWidth - rect.left + GAP;
         break;
       case "top":
-        style.bottom = window.innerHeight - rect.top + GAP;
+        style.bottom = Math.max(window.innerHeight - rect.top + GAP, GAP);
         style.left = Math.min(
           Math.max(rect.left + rect.width / 2 - 150, 12),
           window.innerWidth - 312
@@ -98,6 +98,10 @@ function TooltipBox({
         );
         style.left = rect.right + GAP;
         break;
+    }
+    // Safety clamp — never let tooltip go below viewport
+    if (style.top !== undefined && typeof style.top === "number") {
+      style.top = Math.min(style.top, window.innerHeight - 220);
     }
   } else {
     // Fallback — center of screen
