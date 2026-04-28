@@ -27,7 +27,10 @@ from aiokafka import AIOKafkaProducer
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 # Fallback to environment variables if present (useful for Render/Docker)
-POSTGRES_DSN = os.getenv("DATABASE_URL", "postgresql://scc_user:scc_password@localhost:5432/scc_db")
+_dsn = os.getenv("DATABASE_URL", "postgresql://scc_user:scc_password@localhost:5432/scc_db")
+# asyncpg does not support 'postgresql+asyncpg://' (SQLAlchemy style)
+POSTGRES_DSN = _dsn.replace("postgresql+asyncpg://", "postgresql://")
+
 KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 GPS_INTERVAL_SECONDS = float(os.getenv("GPS_UPDATE_INTERVAL_SECONDS", "2.0"))
 FLEET_SIZE = int(os.getenv("FLEET_SIZE", "20"))
