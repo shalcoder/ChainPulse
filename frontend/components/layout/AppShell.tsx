@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { OnboardingTooltip } from "@/components/ui/OnboardingTooltip";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -82,6 +83,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           }}
         />
       </div>
+
+      {/* Onboarding — present on every page */}
+      <OnboardingTooltip />
 
       {/* ── Main content ──────────────────────────────────────────── */}
       <main className="flex-1 overflow-hidden flex flex-col min-w-0 relative">

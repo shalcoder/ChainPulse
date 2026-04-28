@@ -12,7 +12,6 @@ import { TopBar } from "@/components/panels/TopBar";
 import { EventTicker } from "@/components/panels/EventTicker";
 import { computeFleetMetrics } from "@/lib/utils";
 import { RouteDecision } from "@/types";
-import { OnboardingTooltip } from "@/components/ui/OnboardingTooltip";
 import { DemoProgressOverlay } from "@/components/ui/DemoProgressOverlay";
 
 export default function Dashboard() {
@@ -56,9 +55,6 @@ export default function Dashboard() {
       style={{ background: "var(--bg-base)" }}
     >
       {!booted && <BootScreen onComplete={handleBootComplete} />}
-
-      {/* Onboarding — shown once on first visit */}
-      <OnboardingTooltip />
 
       {/* Demo progress overlay — shown while demo runs */}
       <DemoProgressOverlay

@@ -444,7 +444,7 @@ export default function FleetPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* ── Stat cards ───────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div id="fleet-stats" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <StatCard label="Total Fleet"  value={vehicles.length} colorVar="var(--text-primary)"
             sub="active vehicles" />
           <StatCard label="High Risk"    value={high}   colorVar="var(--risk-high)"
@@ -459,6 +459,7 @@ export default function FleetPage() {
 
         {/* ── Filters ──────────────────────────────────────────────── */}
         <div
+          id="fleet-filters"
           className="rounded-xl p-4"
           style={{
             background: "var(--bg-surface)",
@@ -591,6 +592,7 @@ export default function FleetPage() {
           <>
             {/* Desktop table */}
             <div
+              id="fleet-table"
               className="hidden sm:block rounded-xl overflow-hidden"
               style={{
                 background: "var(--bg-surface)",

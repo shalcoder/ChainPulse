@@ -548,8 +548,10 @@ export default function AuditPage() {
           </div>
         ) : (
           <>
-            <StatsBar records={records} />
-            <div className="flex items-center justify-between mb-6">
+            <div id="audit-stats">
+              <StatsBar records={records} />
+            </div>
+            <div id="audit-filters" className="flex items-center justify-between mb-6">
               <FilterBar active={filter} onChange={setFilter} records={records} />
               <span
                 className="text-[10px] font-mono"
@@ -558,7 +560,7 @@ export default function AuditPage() {
                 {filtered.length} of {records.length} shown
               </span>
             </div>
-            <div className="relative">
+            <div id="audit-timeline" className="relative">
               {filtered.map((rec, i) => (
                 <TimelineEntry
                   key={rec.id}

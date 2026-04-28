@@ -75,30 +75,30 @@ const STACK = [
     category: "Frontend",
     color: "var(--accent)",
     items: [
-      { name: "Next.js 14",     desc: "App router, server components, page-level layouts" },
-      { name: "Mapbox GL JS",   desc: "Live vehicle markers, animated reroute lines, hub overlays" },
-      { name: "TypeScript",     desc: "Full type safety across all components and API calls" },
-      { name: "Tailwind CSS",   desc: "Utility-first styling with CSS variable theme system" },
+      { name: "Next.js 14", desc: "App router, server components, page-level layouts" },
+      { name: "Mapbox GL JS", desc: "Live vehicle markers, animated reroute lines, hub overlays" },
+      { name: "TypeScript", desc: "Full type safety across all components and API calls" },
+      { name: "Tailwind CSS", desc: "Utility-first styling with CSS variable theme system" },
     ],
   },
   {
     category: "Backend",
     color: "#a78bfa",
     items: [
-      { name: "FastAPI",        desc: "Async REST + WebSocket push, event ingestion, orchestration" },
-      { name: "Apache Kafka",   desc: "Event bus for GPS, weather, order, warehouse streams" },
-      { name: "PostgreSQL",     desc: "Shipments, vehicles, routes, decisions, audit log (PostGIS)" },
-      { name: "Redis",          desc: "Hot vehicle position cache, route state, distributed locks" },
+      { name: "FastAPI", desc: "Async REST + WebSocket push, event ingestion, orchestration" },
+      { name: "Apache Kafka", desc: "Event bus for GPS, weather, order, warehouse streams" },
+      { name: "PostgreSQL", desc: "Shipments, vehicles, routes, decisions, audit log (PostGIS)" },
+      { name: "Redis", desc: "Hot vehicle position cache, route state, distributed locks" },
     ],
   },
   {
     category: "AI / ML",
     color: "var(--status-warn)",
     items: [
-      { name: "XGBoost",        desc: "Tabular delay prediction — 8 operational features, trained on 10k records" },
-      { name: "IsolationForest",desc: "Unsupervised anomaly detection on GPS and event deviation patterns" },
-      { name: "OR-Tools",       desc: "VRPTW constrained route optimisation — capacity, time windows, SLA" },
-      { name: "scikit-learn",   desc: "Model training pipeline, feature engineering, .pkl serialisation" },
+      { name: "XGBoost", desc: "Tabular delay prediction — 8 operational features, trained on 10k records" },
+      { name: "IsolationForest", desc: "Unsupervised anomaly detection on GPS and event deviation patterns" },
+      { name: "OR-Tools", desc: "VRPTW constrained route optimisation — capacity, time windows, SLA" },
+      { name: "scikit-learn", desc: "Model training pipeline, feature engineering, .pkl serialisation" },
     ],
   },
 ];
@@ -106,10 +106,10 @@ const STACK = [
 // ── Risk formula ───────────────────────────────────────────────────────────
 
 const FORMULA_TERMS = [
-  { weight: "0.45", label: "Delay Probability",  color: "var(--risk-high)",   desc: "XGBoost output — how likely is this vehicle to be late?" },
-  { weight: "0.25", label: "Anomaly Score",       color: "#a78bfa",            desc: "IsolationForest — how unusual is this vehicle's current behaviour?" },
-  { weight: "0.20", label: "SLA Criticality",     color: "var(--status-warn)", desc: "How close is the shipment to its guaranteed delivery window?" },
-  { weight: "0.10", label: "Weather Severity",    color: "var(--accent)",      desc: "Live severity score from the weather-alerts Kafka topic." },
+  { weight: "0.45", label: "Delay Probability", color: "var(--risk-high)", desc: "XGBoost output — how likely is this vehicle to be late?" },
+  { weight: "0.25", label: "Anomaly Score", color: "#a78bfa", desc: "IsolationForest — how unusual is this vehicle's current behaviour?" },
+  { weight: "0.20", label: "SLA Criticality", color: "var(--status-warn)", desc: "How close is the shipment to its guaranteed delivery window?" },
+  { weight: "0.10", label: "Weather Severity", color: "var(--accent)", desc: "Live severity score from the weather-alerts Kafka topic." },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -476,12 +476,12 @@ function StackCategory({
 // ── Demo sequence ──────────────────────────────────────────────────────────
 
 const DEMO_STEPS = [
-  { n: 1, icon: "⬡", color: "var(--status-ok)",   text: "Open the dashboard — 20 vehicles moving on the live map, all risk scores green." },
-  { n: 2, icon: "⛈", color: "var(--accent)",       text: "Inject a weather alert. Risk scores rise on 3 affected vehicles. Alerts appear in the feed." },
-  { n: 3, icon: "◎", color: "#a78bfa",              text: "IsolationForest detects a GPS anomaly on one vehicle. ANOMALY badge appears on the map marker." },
-  { n: 4, icon: "⊕", color: "var(--status-warn)",  text: "RiskScore crosses 0.70. The system automatically calls OR-Tools — no human needed." },
-  { n: 5, icon: "⊞", color: "var(--risk-medium)",  text: "New route appears on the map in orange. Decision panel shows old ETA → new ETA → time saved → reason code." },
-  { n: 6, icon: "◈", color: "var(--risk-high)",    text: "Open the Audit Trail. Every decision is logged with full explainability — reason, confidence, and solver details." },
+  { n: 1, icon: "⬡", color: "var(--status-ok)", text: "Open the dashboard — 20 vehicles moving on the live map, all risk scores green." },
+  { n: 2, icon: "⛈", color: "var(--accent)", text: "Inject a weather alert. Risk scores rise on 3 affected vehicles. Alerts appear in the feed." },
+  { n: 3, icon: "◎", color: "#a78bfa", text: "IsolationForest detects a GPS anomaly on one vehicle. ANOMALY badge appears on the map marker." },
+  { n: 4, icon: "⊕", color: "var(--status-warn)", text: "RiskScore crosses 0.70. The system automatically calls OR-Tools — no human needed." },
+  { n: 5, icon: "⊞", color: "var(--risk-medium)", text: "New route appears on the map in orange. Decision panel shows old ETA → new ETA → time saved → reason code." },
+  { n: 6, icon: "◈", color: "var(--risk-high)", text: "Open the Audit Trail. Every decision is logged with full explainability — reason, confidence, and solver details." },
 ];
 
 // ── Main page ──────────────────────────────────────────────────────────────
@@ -524,7 +524,7 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-12">
 
         {/* ── Pipeline ────────────────────────────────────────────── */}
-        <section>
+        <section id="about-pipeline">
           <div
             className="text-[10px] font-mono font-bold tracking-widest uppercase mb-6"
             style={{ color: "var(--text-muted)" }}
@@ -547,12 +547,12 @@ export default function AboutPage() {
         </section>
 
         {/* ── Demo sequence ────────────────────────────────────────── */}
-        <section>
+        <section id="about-demo">
           <div
             className="text-[10px] font-mono font-bold tracking-widest uppercase mb-4"
             style={{ color: "var(--text-muted)" }}
           >
-            Demo Flow
+            Demo Flow 
           </div>
 
           <div
