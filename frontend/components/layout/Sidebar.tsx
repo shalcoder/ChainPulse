@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { ShortcutHud } from "@/components/ui/ShortcutHud";
+import { ShortcutHud } from "../ui/ShortcutHud";
 
 interface NavItem {
   href: string;

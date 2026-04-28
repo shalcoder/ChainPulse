@@ -9,47 +9,58 @@
 :root,
 [data-theme="dark"] {
   /* Backgrounds */
-  --bg-base:        #080c14;   /* page background */
-  --map-bg:         #0a0f1a;   /* mock map background — dark navy */
-  --bg-surface:     #0d1117;   /* cards, panels */
-  --bg-elevated:    #161b27;   /* hover state, modals */
-  --bg-input:       #0f1621;   /* inputs, selects */
+  --bg-base: #080c14;
+  /* page background */
+  --map-bg: #0a0f1a;
+  /* mock map background — dark navy */
+  --bg-surface: #0d1117;
+  /* cards, panels */
+  --bg-elevated: #161b27;
+  /* hover state, modals */
+  --bg-input: #0f1621;
+  /* inputs, selects */
 
   /* Borders */
-  --border:         #1e2736;
-  --border-strong:  #2d3a4f;
-  --border-focus:   #22d3ee;   /* cyan focus ring */
+  --border: #1e2736;
+  --border-strong: #2d3a4f;
+  --border-focus: #22d3ee;
+  /* cyan focus ring */
 
   /* Text */
-  --text-primary:   #f1f5f9;
+  --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
-  --text-muted:     #475569;
-  --text-disabled:  #2d3a4f;
+  --text-muted: #475569;
+  --text-disabled: #ffffff;
 
   /* Brand accent */
-  --accent:         #22d3ee;   /* cyan-400 */
-  --accent-dim:     #0e7490;   /* cyan-700 */
-  --accent-glow:    #22d3ee33;
+  --accent: #22d3ee;
+  /* cyan-400 */
+  --accent-dim: #0e7490;
+  /* cyan-700 */
+  --accent-glow: #22d3ee33;
 
   /* Risk colors */
-  --risk-high:      #f87171;   /* red-400 */
-  --risk-high-bg:   #450a0a;
+  --risk-high: #f87171;
+  /* red-400 */
+  --risk-high-bg: #450a0a;
   --risk-high-border: #991b1b;
-  --risk-medium:    #fb923c;   /* orange-400 */
+  --risk-medium: #fb923c;
+  /* orange-400 */
   --risk-medium-bg: #431407;
   --risk-medium-border: #9a3412;
-  --risk-low:       #4ade80;   /* green-400 */
-  --risk-low-bg:    #052e16;
+  --risk-low: #4ade80;
+  /* green-400 */
+  --risk-low-bg: #052e16;
   --risk-low-border: #166534;
 
   /* Status */
-  --status-ok:      #4ade80;
-  --status-warn:    #facc15;
-  --status-error:   #f87171;
+  --status-ok: #4ade80;
+  --status-warn: #facc15;
+  --status-error: #f87171;
 
   /* Sidebar */
-  --sidebar-bg:     #090d15;
-  --sidebar-width:  240px;
+  --sidebar-bg: #090d15;
+  --sidebar-width: 240px;
   --sidebar-collapsed: 56px;
 
   /* Scrollbar */
@@ -57,60 +68,64 @@
   --scrollbar-track: transparent;
 
   /* Shadows */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.5);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.6);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.7);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
 }
 
 [data-theme="light"] {
-  --bg-base:        #f8fafc;
-  --map-bg:         #e8edf5;   /* mock map background — light blue-grey */
-  --bg-surface:     #ffffff;
-  --bg-elevated:    #f1f5f9;
-  --bg-input:       #f8fafc;
+  --bg-base: #f8fafc;
+  --map-bg: #e8edf5;
+  /* mock map background — light blue-grey */
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --bg-input: #f8fafc;
 
-  --border:         #e2e8f0;
-  --border-strong:  #cbd5e1;
-  --border-focus:   #0891b2;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-focus: #0891b2;
 
-  --text-primary:   #0f172a;
+  --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted:     #94a3b8;
-  --text-disabled:  #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-disabled: #000000;
 
-  --accent:         #0891b2;   /* cyan-600 — darker for light bg readability */
-  --accent-dim:     #cffafe;
-  --accent-glow:    #0891b233;
+  --accent: #0891b2;
+  /* cyan-600 — darker for light bg readability */
+  --accent-dim: #cffafe;
+  --accent-glow: #0891b233;
 
-  --risk-high:      #dc2626;
-  --risk-high-bg:   #fef2f2;
+  --risk-high: #dc2626;
+  --risk-high-bg: #fef2f2;
   --risk-high-border: #fca5a5;
-  --risk-medium:    #ea580c;
+  --risk-medium: #ea580c;
   --risk-medium-bg: #fff7ed;
   --risk-medium-border: #fdba74;
-  --risk-low:       #16a34a;
-  --risk-low-bg:    #f0fdf4;
+  --risk-low: #16a34a;
+  --risk-low-bg: #f0fdf4;
   --risk-low-border: #86efac;
 
-  --status-ok:      #16a34a;
-  --status-warn:    #ca8a04;
-  --status-error:   #dc2626;
+  --status-ok: #16a34a;
+  --status-warn: #ca8a04;
+  --status-error: #dc2626;
 
-  --sidebar-bg:     #ffffff;
-  --sidebar-width:  240px;
+  --sidebar-bg: #ffffff;
+  --sidebar-width: 240px;
   --sidebar-collapsed: 56px;
 
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-track: transparent;
 
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.10);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.14);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
 }
 
 /* ── Base reset ────────────────────────────────────────────────────────────── */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -122,11 +137,13 @@ html {
 body {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  font-feature-settings: "tnum" 1; /* tabular numbers everywhere */
+  font-feature-settings: "tnum" 1;
+  /* tabular numbers everywhere */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  overflow: hidden; /* AppShell manages its own scroll */
+  overflow: hidden;
+  /* AppShell manages its own scroll */
 }
 
 /* ── Scrollbars ────────────────────────────────────────────────────────────── */
@@ -135,8 +152,15 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
-.scrollbar-thin::-webkit-scrollbar       { width: 4px; }
-.scrollbar-thin::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 2px;
@@ -148,6 +172,7 @@ body {
   opacity: 0;
   transform: translateY(6px);
 }
+
 .page-enter-active {
   opacity: 1;
   transform: translateY(0);
@@ -157,14 +182,37 @@ body {
 /* ── Theme-aware utility classes ───────────────────────────────────────────── */
 /* Use these instead of hardcoded Tailwind colors in components.               */
 
-.bg-base      { background-color: var(--bg-base); }
-.bg-surface   { background-color: var(--bg-surface); }
-.bg-elevated  { background-color: var(--bg-elevated); }
-.border-theme { border-color: var(--border); }
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-muted   { color: var(--text-muted); }
-.text-accent  { color: var(--accent); }
+.bg-base {
+  background-color: var(--bg-base);
+}
+
+.bg-surface {
+  background-color: var(--bg-surface);
+}
+
+.bg-elevated {
+  background-color: var(--bg-elevated);
+}
+
+.border-theme {
+  border-color: var(--border);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-accent {
+  color: var(--accent);
+}
 
 /* ── Mapbox popup override ─────────────────────────────────────────────────── */
 
@@ -173,7 +221,10 @@ body {
   padding: 0;
   box-shadow: none;
 }
-.scc-popup .mapboxgl-popup-tip { display: none; }
+
+.scc-popup .mapboxgl-popup-tip {
+  display: none;
+}
 
 /* ── Focus ring ────────────────────────────────────────────────────────────── */
 
