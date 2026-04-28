@@ -22,38 +22,36 @@ interface HealthResponse {
 
 function normalize(raw: HealthResponse): SubsystemHealth[] {
   const order = [
-    "xgboost", "isolation_forest", "or_tools",
-    "kafka", "postgresql", "redis", "websocket",
+    "eta_model", "anomaly_model", "kafka",
+    "postgresql", "redis", "websocket",
   ];
 
   const icons: Record<string, string> = {
-    xgboost:          "◈",
-    isolation_forest: "⬡",
-    or_tools:         "⊞",
-    kafka:            "≋",
-    postgresql:       "◫",
-    redis:            "◉",
-    websocket:        "⇌",
+    eta_model:     "◈",
+    anomaly_model: "⬡",
+    kafka:         "≋",
+    postgresql:    "◫",
+    redis:         "◉",
+    websocket:     "⇌",
   };
 
   const labels: Record<string, string> = {
-    xgboost:          "XGBoost",
-    isolation_forest: "IsolationForest",
-    or_tools:         "OR-Tools",
-    kafka:            "Kafka",
-    postgresql:       "PostgreSQL",
-    redis:            "Redis",
-    websocket:        "WebSocket",
+    eta_model:     "XGBoost",
+    anomaly_model: "IsolationForest",
+    kafka:         "Kafka",
+    postgresql:    "PostgreSQL",
+    redis:         "Redis",
+    websocket:     "WebSocket",
   };
 
   const descriptions: Record<string, string> = {
-    xgboost:          "Predicts delivery delay probability from 8 operational features",
-    isolation_forest: "Detects anomalous GPS, dwell time, and route deviation patterns",
-    or_tools:         "Solves Vehicle Routing (VRPTW) with capacity and time-window constraints",
-    kafka:            "Streams GPS, weather, order, and warehouse events in real time",
-    postgresql:       "Stores shipments, vehicles, routes, decisions, and audit records",
-    redis:            "Caches live vehicle positions and route state for sub-ms reads",
-    websocket:        "Pushes every decision and alert to the frontend in real time",
+    eta_model:     "Predicts delivery delay probability from 8 operational features",
+    anomaly_model: "Detects anomalous GPS, dwell time, and route deviation patterns",
+    or_tools:      "Solves Vehicle Routing (VRPTW) with capacity and time-window constraints",
+    kafka:         "Streams GPS, weather, order, and warehouse events in real time",
+    postgresql:    "Stores shipments, vehicles, routes, decisions, and audit records",
+    redis:         "Caches live vehicle positions and route state for sub-ms reads",
+    websocket:     "Pushes every decision and alert to the frontend in real time",
   };
 
   return order.map((key) => {
@@ -357,13 +355,12 @@ const ICONS: Record<string, string> = {
 };
 
 const DESCRIPTIONS: Record<string, string> = {
-  XGBoost:          "Predicts delivery delay probability from 8 operational features per vehicle",
-  IsolationForest:  "Detects anomalous GPS jumps, dwell times, and route deviation patterns",
-  "OR-Tools":       "Solves Vehicle Routing (VRPTW) with capacity and time-window hard constraints",
-  Kafka:            "Streams GPS, weather, order, and warehouse events in real time across 4 topics",
-  PostgreSQL:       "Stores all shipments, vehicles, routes, decisions, and audit records with PostGIS",
-  Redis:            "Caches live vehicle positions and route state for sub-millisecond reads",
-  WebSocket:        "Pushes every optimization decision and risk alert to the frontend instantly",
+  XGBoost:         "Predicts delivery delay probability from 8 operational features per vehicle",
+  IsolationForest: "Detects anomalous GPS jumps, dwell times, and route deviation patterns",
+  Kafka:           "Streams GPS, weather, order, and warehouse events in real time across 4 topics",
+  PostgreSQL:      "Stores all shipments, vehicles, routes, decisions, and audit records with PostGIS",
+  Redis:           "Caches live vehicle positions and route state for sub-millisecond reads",
+  WebSocket:       "Pushes every optimization decision and risk alert to the frontend instantly",
 };
 
 export default function HealthPage() {
@@ -514,8 +511,8 @@ export default function HealthPage() {
                   color: "var(--risk-medium)",
                 }}
               >
-                ⚠ Backend unreachable — showing simulated health data for demo purposes.
-                Start the backend with{" "}
+                ℹ Demo mode — showing simulated health data. All subsystems shown
+                as operational. Start the backend with{" "}
                 <code
                   className="px-1 py-0.5 rounded text-[10px]"
                   style={{ background: "var(--bg-elevated)" }}

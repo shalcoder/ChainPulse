@@ -2,10 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { toggle: toggleTheme } = useTheme();
+
+  useKeyboardShortcuts({
+    onThemeToggle: toggleTheme,
+    onDemoStart: () => {
+      fetch("http://localhost:8000/demo/start", { method: "POST" }).catch(() => {});
+    },
+  });
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // On tablet (768px) auto-collapse sidebar. On mobile (640px) hide entirely.

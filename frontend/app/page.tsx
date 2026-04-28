@@ -67,136 +67,143 @@ export default function Dashboard() {
       </div>
 
       {/* ── 3-panel main area ───────────────────────────────────── */}
-      {/* Desktop/tablet: all 3 panels side by side.
-          Mobile: only map + bottom sheet toggle buttons. */}
-      <div className="flex flex-1 overflow-hidden min-h-0 relative">
+      <div className="flex flex-1 overflow-hidden min-h-0">
 
-        {/* Left fleet sidebar — hidden on mobile, shown md+ */}
+        {/* Left fleet sidebar — md+ only */}
         <div className="hidden md:flex">
           <FleetSidebar vehicles={vehicles} metrics={metrics} />
         </div>
 
-        {/* Center: Full-height map — always visible */}
-        <div className="flex-1 overflow-hidden relative">
-          <ControlTowerMap
-            vehicles={vehicles}
-            hubs={[]}
-            latestDecision={latestDecision}
-          />
+        {/* Center + mobile stack */}
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
 
-          {/* ── Mobile panel toggle buttons ─────────────────────── */}
-          {/* Floats above the map on xs/sm screens only */}
+          {/* Map — fixed height on mobile, flex-1 on desktop */}
           <div
-            className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20
-                        flex items-center gap-2"
+            className="w-full shrink-0 md:flex-1 md:shrink md:h-auto overflow-hidden"
+            style={{ height: "55vw", maxHeight: "420px" }}
           >
-            <button
-              onClick={() =>
-                setMobilePanel((p) => (p === "fleet" ? "none" : "fleet"))
-              }
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[11px]
-                         font-mono font-bold tracking-widest uppercase
-                         transition-all duration-200 shadow-lg"
-              style={{
-                background:
-                  mobilePanel === "fleet"
-                    ? "var(--accent)"
-                    : "var(--bg-surface)",
-                border: "1px solid var(--border-strong)",
-                color:
-                  mobilePanel === "fleet"
-                    ? "var(--bg-base)"
-                    : "var(--text-primary)",
-                boxShadow: "var(--shadow-md)",
-              }}
-            >
-              ⬡ Fleet
-            </button>
-
-            <button
-              onClick={() =>
-                setMobilePanel((p) => (p === "alerts" ? "none" : "alerts"))
-              }
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[11px]
-                         font-mono font-bold tracking-widest uppercase
-                         transition-all duration-200 shadow-lg"
-              style={{
-                background:
-                  mobilePanel === "alerts"
-                    ? "var(--accent)"
-                    : "var(--bg-surface)",
-                border: "1px solid var(--border-strong)",
-                color:
-                  mobilePanel === "alerts"
-                    ? "var(--bg-base)"
-                    : "var(--text-primary)",
-                boxShadow: "var(--shadow-md)",
-              }}
-            >
-              ◈ Alerts
-              {alerts.length > 0 && (
-                <span
-                  className="w-4 h-4 rounded-full text-[9px] flex items-center
-                             justify-center font-black"
-                  style={{
-                    background: "var(--risk-high)",
-                    color: "#fff",
-                  }}
-                >
-                  {alerts.length}
-                </span>
-              )}
-            </button>
+            {/* On md+ override inline height with h-full via a wrapper */}
+            <div className="hidden md:block h-full">
+              <ControlTowerMap
+                vehicles={vehicles}
+                hubs={[]}
+                latestDecision={latestDecision}
+              />
+            </div>
+            {/* Mobile map — fixed height */}
+            <div className="md:hidden w-full h-full">
+              <ControlTowerMap
+                vehicles={vehicles}
+                hubs={[]}
+                latestDecision={latestDecision}
+              />
+            </div>
           </div>
 
-          {/* ── Mobile bottom sheet ─────────────────────────────── */}
-          {mobilePanel !== "none" && (
+          {/* Mobile-only stacked panels below the map */}
+          <div
+            className="md:hidden flex-1 overflow-y-auto scrollbar-thin"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            {/* Fleet section */}
             <div
-              className="md:hidden absolute bottom-0 left-0 right-0 z-20
-                          rounded-t-2xl overflow-hidden flex flex-col"
-              style={{
-                height: "55vh",
-                background: "var(--bg-surface)",
-                border: "1px solid var(--border)",
-                boxShadow: "var(--shadow-lg)",
-              }}
+              className="px-3 py-2"
+              style={{ borderBottom: "1px solid var(--border)" }}
             >
-              {/* Drag handle + close */}
               <div
-                className="flex items-center justify-between px-4 py-2 shrink-0"
-                style={{ borderBottom: "1px solid var(--border)" }}
+                className="text-[10px] font-mono font-bold tracking-widest
+                           uppercase mb-2"
+                style={{ color: "var(--text-muted)" }}
               >
-                <div
-                  className="w-10 h-1 rounded-full mx-auto"
-                  style={{ background: "var(--border-strong)" }}
-                />
-                <button
-                  onClick={() => setMobilePanel("none")}
-                  className="text-xs font-mono shrink-0"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  ✕
-                </button>
+                ⬡ Fleet Status — {vehicles.length} vehicles
               </div>
-
-              {/* Panel content */}
-              <div className="flex-1 overflow-hidden min-h-0">
-                {mobilePanel === "fleet" && (
-                  <FleetSidebar vehicles={vehicles} metrics={metrics} />
-                )}
-                {mobilePanel === "alerts" && (
-                  <RightPanel
-                    alerts={alerts}
-                    latestDecision={latestDecision}
-                    lastMessage={lastMessage}
-                  />
+              <div className="space-y-1.5">
+                {[...vehicles]
+                  .sort((a, b) => b.risk_score - a.risk_score)
+                  .slice(0, 8)
+                  .map((v) => {
+                    const color =
+                      v.risk_level === "HIGH"
+                        ? "var(--risk-high)"
+                        : v.risk_level === "MEDIUM"
+                          ? "var(--risk-medium)"
+                          : "var(--risk-low)";
+                    return (
+                      <div
+                        key={v.vehicle_id}
+                        className="flex items-center gap-3 rounded px-3 py-2"
+                        style={{
+                          background: "var(--bg-surface)",
+                          border: "1px solid var(--border)",
+                        }}
+                      >
+                        <span
+                          className="w-2 h-2 rounded-full shrink-0"
+                          style={{ background: color }}
+                        />
+                        <span
+                          className="text-xs font-mono font-bold flex-1"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          {v.vehicle_id}
+                        </span>
+                        <span
+                          className="text-[10px] font-mono"
+                          style={{ color }}
+                        >
+                          {v.risk_level}
+                        </span>
+                        <div
+                          className="w-16 h-1.5 rounded-full overflow-hidden"
+                          style={{ background: "var(--bg-elevated)" }}
+                        >
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${v.risk_score * 100}%`,
+                              background: color,
+                            }}
+                          />
+                        </div>
+                        <span
+                          className="text-[10px] font-mono w-8 text-right"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {v.speed_kmh}
+                        </span>
+                      </div>
+                    );
+                  })}
+                {vehicles.length > 8 && (
+                  <p
+                    className="text-[10px] font-mono text-center py-1"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    +{vehicles.length - 8} more — see Fleet Monitor
+                  </p>
                 )}
               </div>
             </div>
-          )}
+
+            {/* Alerts section */}
+            <div className="px-3 py-2">
+              <div
+                className="text-[10px] font-mono font-bold tracking-widest
+                           uppercase mb-2"
+                style={{ color: "var(--text-muted)" }}
+              >
+                ◈ Alerts — {alerts.length} active
+              </div>
+              <RightPanel
+                alerts={alerts}
+                latestDecision={latestDecision}
+                lastMessage={lastMessage}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Right panel — hidden on mobile, shown lg+ */}
+        {/* Right panel — lg+ only */}
         <div className="hidden lg:flex">
           <RightPanel
             alerts={alerts}

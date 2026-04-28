@@ -10,6 +10,7 @@
 [data-theme="dark"] {
   /* Backgrounds */
   --bg-base:        #080c14;   /* page background */
+  --map-bg:         #0a0f1a;   /* mock map background — dark navy */
   --bg-surface:     #0d1117;   /* cards, panels */
   --bg-elevated:    #161b27;   /* hover state, modals */
   --bg-input:       #0f1621;   /* inputs, selects */
@@ -63,6 +64,7 @@
 
 [data-theme="light"] {
   --bg-base:        #f8fafc;
+  --map-bg:         #e8edf5;   /* mock map background — light blue-grey */
   --bg-surface:     #ffffff;
   --bg-elevated:    #f1f5f9;
   --bg-input:       #f8fafc;

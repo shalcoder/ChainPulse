@@ -5,6 +5,7 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 import { useFleetState } from "@/hooks/useFleetState";
 import { VehiclePosition } from "@/types";
 import { riskColor } from "@/lib/utils";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 // ── Sort config ───────────────────────────────────────────────────────────────
 
@@ -393,6 +394,7 @@ export default function FleetPage() {
     : "0.0";
 
   return (
+    <PageTransition> 
     <div
       className="h-full overflow-y-auto scrollbar-thin font-mono"
       style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}
@@ -724,5 +726,6 @@ export default function FleetPage() {
 
       </div>
     </div>
+    </PageTransition>
   );
 }

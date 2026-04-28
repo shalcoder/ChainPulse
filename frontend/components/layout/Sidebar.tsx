@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { ShortcutHud } from "@/components/ui/ShortcutHud";
 
 interface NavItem {
   href: string;
@@ -236,12 +237,15 @@ export function Sidebar({ collapsed, onToggle }: Props) {
       >
         <ThemeToggle />
         {!collapsed && (
-          <div
-            className="px-3 pt-1 pb-0.5 text-[9px] font-mono tracking-widest"
-            style={{ color: "var(--text-disabled)" }}
-          >
-            SOLUTION CHALLENGE 2026
-          </div>
+          <>
+            <ShortcutHud />
+            <div
+              className="px-3 pt-1 pb-0.5 text-[9px] font-mono tracking-widest"
+              style={{ color: "var(--text-disabled)" }}
+            >
+              SOLUTION CHALLENGE 2026
+            </div>
+          </>
         )}
       </div>
     </aside>
