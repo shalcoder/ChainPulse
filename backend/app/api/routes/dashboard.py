@@ -102,6 +102,8 @@ async def get_audit_records(
                 "reason_code": r.context.get("reason_code") if r.context else None,
                 "reason_description": r.summary,
                 "action_taken": r.summary,
+                "gemini_driver_instruction": r.context.get("gemini_driver_instruction") if r.context else None,
+                "gemini_judge_explanation": r.context.get("gemini_judge_explanation") if r.context else None,
                 "created_at": r.created_at.isoformat() if r.created_at else None,
             }
             for r in records
