@@ -7,22 +7,47 @@ interface Props {
   className?: string;
 }
 
-const config = {
-  HIGH:   { bg: "bg-red-500/20", border: "border-red-500", text: "text-red-400", dot: "bg-red-500", pulse: true },
-  MEDIUM: { bg: "bg-orange-500/20", border: "border-orange-500", text: "text-orange-400", dot: "bg-orange-400", pulse: false },
-  LOW:    { bg: "bg-green-500/10", border: "border-green-600", text: "text-green-400", dot: "bg-green-500", pulse: false },
-};
-
 export function RiskBadge({ level, score, className }: Props) {
-  const c = config[level];
+  const styles: Record<RiskLevel, React.CSSProperties> = {
+    HIGH: {
+      background: "var(--risk-high-bg)",
+      border: "1px solid var(--risk-high-border)",
+      color: "var(--risk-high)",
+    },
+    MEDIUM: {
+      background: "var(--risk-medium-bg)",
+      border: "1px solid var(--risk-medium-border)",
+      color: "var(--risk-medium)",
+    },
+    LOW: {
+      background: "var(--risk-low-bg)",
+      border: "1px solid var(--risk-low-border)",
+      color: "var(--risk-low)",
+    },
+  };
+
+  const dotColor: Record<RiskLevel, string> = {
+    HIGH:   "var(--risk-high)",
+    MEDIUM: "var(--risk-medium)",
+    LOW:    "var(--risk-low)",
+  };
+
   return (
-    <span className={cn(
-      "inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-xs font-mono font-bold tracking-widest",
-      c.bg, c.border, c.text, className
-    )}>
-      <span className={cn("w-1.5 h-1.5 rounded-full", c.dot, c.pulse && "animate-pulse")} />
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono font-bold tracking-widest",
+        className
+      )}
+      style={styles[level]}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full shrink-0 ${level === "HIGH" ? "animate-pulse" : ""}`}
+        style={{ background: dotColor[level] }}
+      />
       {level}
-      {score !== undefined && <span className="opacity-60">·{score.toFixed(2)}</span>}
+      {score !== undefined && (
+        <span style={{ opacity: 0.6 }}>·{score.toFixed(2)}</span>
+      )}
     </span>
   );
 }

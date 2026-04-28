@@ -10,8 +10,11 @@ interface Props {
 
 function SystemHealth() {
   return (
-    <div className="px-3 py-2 border-b border-slate-800">
-      <div className="text-[10px] font-mono text-slate-600 tracking-widest uppercase mb-2">
+    <div className="px-3 py-2" style={{ borderBottom: "1px solid var(--border)" }}>
+      <div
+        className="text-[10px] font-mono tracking-widest uppercase mb-2"
+        style={{ color: "var(--text-muted)" }}
+      >
         System Health
       </div>
       <div className="grid grid-cols-2 gap-1">
@@ -39,11 +42,22 @@ function VehicleRow({ v }: { v: VehiclePosition }) {
   const isMed = v.risk_level === "MEDIUM";
 
   return (
-    <div className={`px-3 py-2 border-b border-slate-800/50 hover:bg-slate-800/30
-                     transition-colors cursor-default
-                     ${isHigh ? "bg-red-950/10" : ""}`}>
+    <div
+      className="px-3 py-2 transition-colors duration-150 cursor-default"
+      style={{
+        borderBottom: "1px solid var(--border)",
+        background: isHigh ? "var(--risk-high-bg)" : "transparent",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-elevated)")}
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.background = isHigh ? "var(--risk-high-bg)" : "transparent")
+      }
+    >
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-mono font-bold text-slate-200">
+        <span
+          className="text-xs font-mono font-bold"
+          style={{ color: "var(--text-primary)" }}
+        >
           {v.vehicle_id}
         </span>
         <span
@@ -71,10 +85,10 @@ function VehicleRow({ v }: { v: VehiclePosition }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono text-slate-600">
+        <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
           {v.speed_kmh} km/h
         </span>
-        <span className="text-[10px] font-mono text-slate-600">
+        <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
           {v.risk_score.toFixed(2)}
         </span>
       </div>
@@ -86,35 +100,60 @@ export function FleetSidebar({ vehicles, metrics }: Props) {
   const sorted = [...vehicles].sort((a, b) => b.risk_score - a.risk_score);
 
   return (
-    <div className="w-[220px] shrink-0 border-r border-slate-800 bg-[#090d15]
-                    flex flex-col overflow-hidden">
-
+    <div
+      className="w-[220px] shrink-0 flex flex-col overflow-hidden"
+      style={{
+        borderRight: "1px solid var(--border)",
+        background: "var(--sidebar-bg)",
+      }}
+    >
       {/* Header */}
-      <div className="px-3 py-2 border-b border-slate-800 shrink-0">
+      <div
+        className="px-3 py-2 shrink-0"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono text-slate-500 tracking-widest uppercase">
+          <span
+            className="text-[10px] font-mono tracking-widest uppercase"
+            style={{ color: "var(--text-muted)" }}
+          >
             Fleet Status
           </span>
-          <span className="text-[10px] font-mono text-slate-600">
+          <span
+            className="text-[10px] font-mono"
+            style={{ color: "var(--text-muted)" }}
+          >
             {vehicles.length} units
           </span>
         </div>
       </div>
 
       {/* Risk summary pills */}
-      <div className="grid grid-cols-3 divide-x divide-slate-800 border-b border-slate-800 shrink-0">
-        <div className="flex flex-col items-center py-2">
-          <span className="text-sm font-black text-red-400">{metrics.high_risk_count}</span>
-          <span className="text-[9px] font-mono text-slate-600 uppercase">High</span>
-        </div>
-        <div className="flex flex-col items-center py-2">
-          <span className="text-sm font-black text-orange-400">{metrics.medium_risk_count}</span>
-          <span className="text-[9px] font-mono text-slate-600 uppercase">Med</span>
-        </div>
-        <div className="flex flex-col items-center py-2">
-          <span className="text-sm font-black text-green-400">{metrics.low_risk_count}</span>
-          <span className="text-[9px] font-mono text-slate-600 uppercase">Low</span>
-        </div>
+      <div
+        className="grid grid-cols-3 shrink-0"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
+        {[
+          { count: metrics.high_risk_count,   label: "High", color: "var(--risk-high)" },
+          { count: metrics.medium_risk_count, label: "Med",  color: "var(--risk-medium)" },
+          { count: metrics.low_risk_count,    label: "Low",  color: "var(--risk-low)" },
+        ].map(({ count, label, color }, i) => (
+          <div
+            key={label}
+            className="flex flex-col items-center py-2"
+            style={{
+              borderRight: i < 2 ? "1px solid var(--border)" : "none",
+            }}
+          >
+            <span className="text-sm font-black" style={{ color }}>{count}</span>
+            <span
+              className="text-[9px] font-mono uppercase"
+              style={{ color: "var(--text-muted)" }}
+            >
+              {label}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* System health */}

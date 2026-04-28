@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FleetMetrics } from "@/types";
 import { DemoLauncher } from "@/components/panels/DemoLauncher";
-import Link from "next/link";
 
 interface Props {
   connected: boolean;
@@ -12,7 +11,6 @@ interface Props {
   dateDisplay: string;
 }
 
-// Animated counter — smoothly counts from previous value to new value
 function useAnimatedValue(target: number, duration = 600): number {
   const [display, setDisplay] = useState(target);
   const prevRef = useRef(target);
@@ -22,12 +20,10 @@ function useAnimatedValue(target: number, duration = 600): number {
     const from = prevRef.current;
     const to = target;
     if (from === to) return;
-
     const start = performance.now();
     const step = (now: number) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(Math.round(from + (to - from) * eased));
       if (progress < 1) {
@@ -76,18 +72,29 @@ function MetricPill({
       : value;
 
   return (
-    <div className={`flex flex-col items-center px-4 py-1.5 border-r border-slate-800
-                     last:border-r-0 transition-colors duration-300
-                     ${flashing ? "bg-red-950/30" : ""}`}>
-      <span className={`text-lg font-black tabular-nums transition-colors duration-300
-                        ${color || "text-white"}
-                        ${flashing ? "scale-110" : ""}`}>
+    <div
+      className="flex flex-col items-center px-4 py-1.5 last:border-r-0
+                 transition-colors duration-300"
+      style={{
+        borderRight: "1px solid var(--border)",
+        background: flashing ? "rgba(239,68,68,0.08)" : "transparent",
+      }}
+    >
+      <span
+        className="text-lg font-black tabular-nums transition-colors duration-300"
+        style={{ color: color || "var(--text-primary)" }}
+      >
         {displayValue}
         {unit && (
-          <span className="text-xs font-normal text-slate-500 ml-0.5">{unit}</span>
+          <span className="text-xs font-normal ml-0.5" style={{ color: "var(--text-muted)" }}>
+            {unit}
+          </span>
         )}
       </span>
-      <span className="text-[10px] font-mono text-slate-600 tracking-widest uppercase mt-0.5">
+      <span
+        className="text-[10px] font-mono tracking-widest uppercase mt-0.5"
+        style={{ color: "var(--text-muted)" }}
+      >
         {label}
       </span>
     </div>
@@ -96,90 +103,79 @@ function MetricPill({
 
 export function TopBar({ connected, metrics, reroutes, dateDisplay }: Props) {
   return (
-    <header className="shrink-0 border-b border-slate-800 bg-[#080c14]/95 backdrop-blur">
-
-      {/* Row 1 — branding + demo + date */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800/60">
+    <header
+      className="shrink-0 border-b backdrop-blur"
+      style={{
+        background: "var(--bg-surface)",
+        borderColor: "var(--border)",
+      }}
+    >
+      {/* Row 1 — status + demo + date */}
+      <div
+        className="flex items-center justify-between px-4 py-2 border-b"
+        style={{ borderColor: "var(--border)" }}
+      >
+        {/* Left — page title + live indicator */}
         <div className="flex items-center gap-3">
+          <span
+            className="text-xs font-mono font-bold tracking-widest uppercase"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Control Tower
+          </span>
 
-          {/* Logo mark */}
-          <div className="relative w-7 h-7 shrink-0">
-            <div className="absolute inset-0 border-2 border-cyan-500 rotate-45 rounded-sm" />
-            <div className="absolute inset-[3px] bg-cyan-500/20 rotate-45 rounded-sm" />
-            <div className="absolute inset-[6px] bg-cyan-400 rotate-45 rounded-sm" />
-          </div>
-
-          <div className="flex items-baseline gap-2">
-            <span className="text-base font-black tracking-[0.12em] text-white uppercase">
-              Chain<span className="text-cyan-400">Pulse</span>
-            </span>
-            <span className="text-[10px] text-slate-600 tracking-widest uppercase hidden sm:block">
-              AI Supply Chain Control Tower
-            </span>
-          </div>
-
-          {/* Live indicator */}
-          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10px] font-mono
-            ${connected
-              ? "border-green-800 bg-green-950/40 text-green-400"
-              : "border-red-800 bg-red-950/40 text-red-400"}`}>
-            <span className={`w-1.5 h-1.5 rounded-full
-              ${connected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10px] font-mono"
+            style={
+              connected
+                ? {
+                    borderColor: "var(--status-ok)",
+                    background: "rgba(74,222,128,0.06)",
+                    color: "var(--status-ok)",
+                  }
+                : {
+                    borderColor: "var(--status-error)",
+                    background: "rgba(248,113,113,0.06)",
+                    color: "var(--status-error)",
+                  }
+            }
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: connected ? "var(--status-ok)" : "var(--status-error)",
+                animation: connected ? "pulse 2s infinite" : "none",
+              }}
+            />
             {connected ? "LIVE" : "OFFLINE"}
           </div>
         </div>
 
+        {/* Right — demo launcher + date */}
         <div className="flex items-center gap-4">
           <DemoLauncher />
-          <Link
-            href="/audit"
-            className="px-3 py-1 rounded border border-slate-700 text-slate-400
-                       text-[10px] font-mono uppercase tracking-widest
-                       hover:border-cyan-700 hover:text-cyan-400 transition-all"
+          <span
+            className="text-[10px] font-mono tracking-widest hidden md:block"
+            style={{ color: "var(--text-muted)" }}
           >
-            Audit Trail →
-          </Link>
-          <span className="text-[10px] font-mono text-slate-600 tracking-widest hidden md:block">
             {dateDisplay}
           </span>
         </div>
       </div>
 
       {/* Row 2 — animated metrics strip */}
-      <div className="flex items-stretch divide-x divide-slate-800">
-        <MetricPill
-          label="Fleet"
-          value={metrics.total_vehicles}
-        />
-        <MetricPill
-          label="High Risk"
-          value={metrics.high_risk_count}
-          color="text-red-400"
-          flash
-        />
-        <MetricPill
-          label="Medium"
-          value={metrics.medium_risk_count}
-          color="text-orange-400"
-        />
-        <MetricPill
-          label="Alerts"
-          value={metrics.active_alerts}
-          color="text-amber-400"
-          flash
-        />
-        <MetricPill
-          label="SLA Hit"
-          value={metrics.sla_hit_rate.toFixed(1)}
-          unit="%"
-          color="text-cyan-400"
-        />
-        <MetricPill
-          label="Reroutes"
-          value={reroutes}
-          color="text-violet-400"
-          flash
-        />
+      <div className="flex items-stretch" style={{ borderColor: "var(--border)" }}>
+        <MetricPill label="Fleet"     value={metrics.total_vehicles} />
+        <MetricPill label="High Risk" value={metrics.high_risk_count}
+          color="var(--risk-high)" flash />
+        <MetricPill label="Medium"    value={metrics.medium_risk_count}
+          color="var(--risk-medium)" />
+        <MetricPill label="Alerts"    value={metrics.active_alerts}
+          color="var(--status-warn)" flash />
+        <MetricPill label="SLA Hit"   value={metrics.sla_hit_rate.toFixed(1)}
+          unit="%" color="var(--accent)" />
+        <MetricPill label="Reroutes"  value={reroutes}
+          color="#a78bfa" flash />
       </div>
     </header>
   );

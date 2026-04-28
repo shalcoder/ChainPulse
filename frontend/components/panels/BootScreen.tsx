@@ -24,7 +24,6 @@ export function BootScreen({ onComplete }: Props) {
 
   useEffect(() => {
     let elapsed = 0;
-    const totalDuration = STEPS.reduce((sum, s) => sum + s.duration, 0);
 
     STEPS.forEach((step, i) => {
       setTimeout(() => {
@@ -44,63 +43,106 @@ export function BootScreen({ onComplete }: Props) {
   return (
     <div
       className={`fixed inset-0 z-50 flex flex-col items-center justify-center
-                  bg-[#080c14] transition-opacity duration-500
+                  transition-opacity duration-500
                   ${done ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+      style={{ background: "var(--bg-base)" }}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 mb-10">
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 border-2 border-cyan-500 rotate-45 rounded-sm" />
-          <div className="absolute inset-[3px] bg-cyan-500/20 rotate-45 rounded-sm" />
-          <div className="absolute inset-[7px] bg-cyan-400 rotate-45 rounded-sm" />
+          <div
+            className="absolute inset-0 border-2 rotate-45 rounded-sm"
+            style={{ borderColor: "var(--accent)" }}
+          />
+          <div
+            className="absolute inset-[3px] rotate-45 rounded-sm"
+            style={{ background: "var(--accent-glow)" }}
+          />
+          <div
+            className="absolute inset-[7px] rotate-45 rounded-sm"
+            style={{ background: "var(--accent)" }}
+          />
         </div>
         <div>
-          <div className="text-xl font-black tracking-[0.15em] text-white uppercase">
-            Chain<span className="text-cyan-400">Pulse</span>
+          <div
+            className="text-xl font-black tracking-[0.15em] uppercase"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Chain
+            <span style={{ color: "var(--accent)" }}>Pulse</span>
           </div>
-          <div className="text-[10px] font-mono text-slate-600 tracking-widest uppercase">
+          <div
+            className="text-[10px] font-mono tracking-widest uppercase"
+            style={{ color: "var(--text-muted)" }}
+          >
             AI Supply Chain Control Tower
           </div>
         </div>
       </div>
 
       {/* Boot log */}
-      <div className="w-[480px] bg-slate-900/60 border border-slate-800 rounded-lg p-4 mb-6
-                      font-mono text-xs space-y-1.5">
-        {STEPS.map((step, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-2 transition-opacity duration-300
-                        ${visibleSteps.includes(i) ? "opacity-100" : "opacity-0"}`}
-          >
-            <span className={`shrink-0 ${
-              i === visibleSteps[visibleSteps.length - 1] && !done
-                ? "text-cyan-400 animate-pulse"
-                : "text-green-500"
-            }`}>
-              {i === visibleSteps[visibleSteps.length - 1] && !done ? "►" : "✓"}
-            </span>
-            <span className={
-              i === STEPS.length - 1 && visibleSteps.includes(i)
-                ? "text-cyan-400"
-                : "text-slate-400"
-            }>
-              {step.text}
-            </span>
-          </div>
-        ))}
+      <div
+        className="w-[90vw] max-w-[480px] rounded-lg p-4 mb-6 font-mono text-xs space-y-1.5"
+        style={{
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        {STEPS.map((step, i) => {
+          const isActive =
+            i === visibleSteps[visibleSteps.length - 1] && !done;
+          const isVisible = visibleSteps.includes(i);
+          const isLast = i === STEPS.length - 1;
+
+          return (
+            <div
+              key={i}
+              className="flex items-center gap-2 transition-opacity duration-300"
+              style={{ opacity: isVisible ? 1 : 0 }}
+            >
+              <span
+                className={`shrink-0 ${isActive ? "animate-pulse" : ""}`}
+                style={{
+                  color: isActive ? "var(--accent)" : "var(--status-ok)",
+                }}
+              >
+                {isActive ? "►" : "✓"}
+              </span>
+              <span
+                style={{
+                  color:
+                    isLast && isVisible
+                      ? "var(--accent)"
+                      : "var(--text-secondary)",
+                }}
+              >
+                {step.text}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Progress bar */}
-      <div className="w-[480px]">
-        <div className="flex justify-between text-[10px] font-mono text-slate-600 mb-1">
+      <div className="w-[90vw] max-w-[480px]">
+        <div
+          className="flex justify-between text-[10px] font-mono mb-1"
+          style={{ color: "var(--text-muted)" }}
+        >
           <span>SYSTEM BOOT</span>
           <span>{progress}%</span>
         </div>
-        <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+        <div
+          className="h-1 rounded-full overflow-hidden"
+          style={{ background: "var(--bg-elevated)" }}
+        >
           <div
-            className="h-full bg-cyan-500 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%`, boxShadow: "0 0 8px #06b6d4" }}
+            className="h-full rounded-full transition-all duration-300"
+            style={{
+              width: `${progress}%`,
+              background: "var(--accent)",
+              boxShadow: "0 0 8px var(--accent)",
+            }}
           />
         </div>
       </div>
