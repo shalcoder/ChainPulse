@@ -204,6 +204,29 @@ async def publish_decision(
         except Exception as e:
             logger.error(f"Failed to store decision in DB: {e}")
 
+    # ── Append to in-memory audit store ──────────────────────────────────
+    try:
+        from app.api.routes.dashboard import append_audit
+        append_audit({
+            "id": decision_id,
+            "event_type": "ROUTE_DECISION",
+            "vehicle_id": decision_record["vehicle_id"],
+            "shipment_id": decision_record["shipment_ids"][0] if decision_record["shipment_ids"] else None,
+            "risk_score": decision_record["risk_score"],
+            "risk_level": decision_record["risk_level"],
+            "reason_code": decision_record["reason_code"],
+            "reason_description": decision_record["reason_description"],
+            "action_taken": (
+                f"OR-Tools VRPTW reroute — status={decision_record['solver_status']}, "
+                f"ETA delta={decision_record['eta_delta_min']}min, "
+                f"distance={decision_record['total_distance_km']}km, "
+                f"stops={len(decision_record['route_stops'])}"
+            ),
+            "created_at": decision_record["timestamp"],
+        })
+    except Exception as e:
+        logger.error(f"In-memory audit append failed: {e}")
+
     # ── Broadcast over WebSocket ──────────────────────────────────────────
     if websocket_manager is not None:
         try:

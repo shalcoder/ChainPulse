@@ -21,6 +21,18 @@ from app.services.dispatch.websocket_manager import WebSocketManager
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+# ── In-memory audit store (demo-safe fallback) ────────────────────────────────
+# Holds last 100 decisions in memory so audit trail always works even if
+# PostgreSQL write fails due to FK constraints on demo vehicle IDs.
+_audit_store: list[dict] = []
+_AUDIT_MAX = 100
+
+def append_audit(record: dict) -> None:
+    """Called by decision_publisher to add a record to the in-memory store."""
+    _audit_store.insert(0, record)  # newest first
+    if len(_audit_store) > _AUDIT_MAX:
+        _audit_store.pop()
+
 
 @router.websocket("/dashboard/stream")
 async def dashboard_stream(
@@ -65,7 +77,12 @@ async def get_audit_records(
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
-    """Return last N audit records for the audit trail page."""
+    """Return last N audit records. In-memory store first, DB as secondary."""
+    # Always return in-memory store — guaranteed to have demo data
+    if _audit_store:
+        return _audit_store[:limit]
+
+    # Fallback: try PostgreSQL
     try:
         from app.models.decisions import AuditRecord
         result = await db.execute(

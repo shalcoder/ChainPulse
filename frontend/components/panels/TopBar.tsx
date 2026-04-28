@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FleetMetrics } from "@/types";
 import { DemoLauncher } from "@/components/panels/DemoLauncher";
+import Link from "next/link";
 
 interface Props {
   connected: boolean;
@@ -130,6 +131,14 @@ export function TopBar({ connected, metrics, reroutes, dateDisplay }: Props) {
 
         <div className="flex items-center gap-4">
           <DemoLauncher />
+          <Link
+            href="/audit"
+            className="px-3 py-1 rounded border border-slate-700 text-slate-400
+                       text-[10px] font-mono uppercase tracking-widest
+                       hover:border-cyan-700 hover:text-cyan-400 transition-all"
+          >
+            Audit Trail →
+          </Link>
           <span className="text-[10px] font-mono text-slate-600 tracking-widest hidden md:block">
             {dateDisplay}
           </span>
