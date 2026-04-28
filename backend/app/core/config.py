@@ -29,8 +29,12 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = "scc_password"
     POSTGRES_DB: str = "scc_db"
 
-    @property
-    def DATABASE_URL(self) -> str:
+    # Set by Render/Heroku directly
+    DATABASE_URL: str | None = None
+
+    def get_database_url(self) -> str:
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
@@ -38,11 +42,8 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL_SYNC(self) -> str:
-        # Used only for Alembic migrations (sync driver)
-        return (
-            f"postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-        )
+        url = self.get_database_url()
+        return url.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
 
     # ── Redis ─────────────────────────────────────────────────────────────────
     REDIS_HOST: str = "localhost"

@@ -28,7 +28,7 @@ from app.core.config import settings
 # max_overflow=20: allow 20 extra connections during traffic spikes
 # pool_pre_ping=True: test connections before use (avoids "connection closed" errors)
 engine: AsyncEngine = create_async_engine(
-    settings.DATABASE_URL,
+    settings.get_database_url(),
     pool_size=10,
     max_overflow=20,
     pool_pre_ping=True,
