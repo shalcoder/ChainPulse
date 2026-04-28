@@ -9,6 +9,7 @@ interface Props {
   metrics: FleetMetrics;
   reroutes: number;
   dateDisplay: string;
+  onDemoStateChange?: (state: "idle" | "running" | "done" | "error") => void;
 }
 
 function useAnimatedValue(target: number, duration = 600): number {
@@ -101,7 +102,7 @@ function MetricPill({
   );
 }
 
-export function TopBar({ connected, metrics, reroutes, dateDisplay }: Props) {
+export function TopBar({ connected, metrics, reroutes, dateDisplay, onDemoStateChange }: Props) {
   return (
     <header
       className="shrink-0 border-b backdrop-blur"
@@ -153,7 +154,7 @@ export function TopBar({ connected, metrics, reroutes, dateDisplay }: Props) {
 
         {/* Right — demo launcher + date */}
         <div className="flex items-center gap-4">
-          <DemoLauncher />
+          <DemoLauncher onStateChange={onDemoStateChange} />
           <span
             className="text-[10px] font-mono tracking-widest hidden md:block"
             style={{ color: "var(--text-muted)" }}

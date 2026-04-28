@@ -23,9 +23,9 @@ const STEPS: TooltipStep[] = [
     position: "left",
   },
   {
-    targetId: "onboard-decision",
+    targetId: "onboard-alerts",
     title: "AI Decision Panel",
-    body: "When risk crosses the threshold, OR-Tools automatically calculates a new route. Old ETA vs new ETA shown with reason code.",
+    body: "When risk crosses the HIGH threshold (0.70), OR-Tools automatically calculates a new route. Old ETA vs new ETA shown here with full reason code.",
     position: "left",
   },
   {

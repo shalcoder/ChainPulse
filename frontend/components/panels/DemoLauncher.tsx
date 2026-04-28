@@ -4,30 +4,39 @@ import { useState } from "react";
 
 type DemoState = "idle" | "running" | "done" | "error";
 
-export function DemoLauncher() {
+interface Props {
+  onStateChange?: (state: DemoState) => void;
+}
+
+export function DemoLauncher({ onStateChange }: Props) {
   const [state, setState] = useState<DemoState>("idle");
   const [countdown, setCountdown] = useState(0);
+
+  function updateState(s: DemoState) {
+    setState(s);
+    onStateChange?.(s);
+  }
 
   async function handleStart() {
     if (state === "running") return;
     try {
       const res = await fetch("http://localhost:8000/demo/start", { method: "POST" });
       const data = await res.json();
-      if (data.status === "already_running") { setState("running"); return; }
-      setState("running");
+      if (data.status === "already_running") { updateState("running"); return; }
+      updateState("running");
       setCountdown(25);
       const interval = setInterval(() => {
         setCountdown((prev) => {
-          if (prev <= 1) { clearInterval(interval); setState("done"); return 0; }
+          if (prev <= 1) { clearInterval(interval); updateState("done"); return 0; }
           return prev - 1;
         });
       }, 1000);
     } catch {
-      setState("error");
+      updateState("error");
     }
   }
 
-  function handleReset() { setState("idle"); setCountdown(0); }
+  function handleReset() { updateState("idle"); setCountdown(0); }
 
   if (state === "idle") return (
     <button

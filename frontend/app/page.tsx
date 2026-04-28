@@ -66,6 +66,8 @@ export default function Dashboard() {
         onComplete={() => setDemoRunning(false)}
       />
 
+      {/* onboard-decision target — wraps the right panel area */}
+
       {/* ── Top bar ─────────────────────────────────────────────── */}
       {/* On mobile, add left padding so it doesn't clash with the
           floating hamburger button from AppShell */}
@@ -75,6 +77,7 @@ export default function Dashboard() {
           metrics={metrics}
           reroutes={reroutes}
           dateDisplay={dateDisplay}
+          onDemoStateChange={(s) => setDemoRunning(s === "running")}
         />
       </div>
 
