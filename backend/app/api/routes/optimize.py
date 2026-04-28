@@ -113,7 +113,6 @@ async def optimize(
     async def fetch_and_publish_gemini():
         try:
             from app.services.dispatch.gemini_narrator import generate_dispatch_instructions
-            import asyncio
             
             gemini_response = await generate_dispatch_instructions(decision)
             decision["gemini_driver_instruction"] = gemini_response.get("driver_instruction")
@@ -127,7 +126,6 @@ async def optimize(
         except Exception as e:
             logger.error(f"Gemini narrator failed: {e}")
 
-    import asyncio
     asyncio.create_task(fetch_and_publish_gemini())
 
     return {"status": "optimized", "decision": decision}
