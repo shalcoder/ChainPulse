@@ -116,10 +116,7 @@ class Settings(BaseSettings):
     WS_HEARTBEAT_INTERVAL: int = 30   # seconds
 
     # ── CORS ──────────────────────────────────────────────────────────────────
-    CORS_ORIGINS: list[str] = [
-        "http://localhost:3000",   # Next.js dev server
-        "http://127.0.0.1:3000",
-    ]
+    CORS_ORIGINS: list[str] = ["*"]
 
     # ── Mapbox ────────────────────────────────────────────────────────────────
     MAPBOX_ACCESS_TOKEN: str = ""

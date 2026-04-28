@@ -179,7 +179,9 @@ async def _run_demo_sequence():
     import httpx
 
     global _demo_running
-    BASE = "http://localhost:8000"
+    import os
+    port = os.getenv("PORT", "8000")
+    BASE = f"http://localhost:{port}"
 
     async def post_event(payload: dict):
         async with httpx.AsyncClient(timeout=30) as client:
