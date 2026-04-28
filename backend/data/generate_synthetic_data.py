@@ -144,8 +144,8 @@ async def seed_database() -> None:
             await conn.execute(
                 """
                 INSERT INTO hubs (id, name, city, latitude, longitude,
-                                  capacity_vehicles, dock_count, congestion_score, is_active)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, 0.0, true)
+                                  capacity_vehicles, dock_count, congestion_score, is_active, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, 0.0, true, NOW())
                 ON CONFLICT (id) DO NOTHING
                 """,
                 hub_id,
@@ -181,10 +181,10 @@ async def seed_database() -> None:
                     latitude, longitude, speed_kmh, heading_degrees,
                     fuel_level_pct, odometer_km, status,
                     current_risk_score, anomaly_score, delay_probability,
-                    current_hub_id
+                    current_hub_id, last_seen_at, created_at
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, 0.0, 0.0, 100.0, 0.0,
-                        'idle', 0.0, 0.0, 0.0, $8)
+                        'idle', 0.0, 0.0, 0.0, $8, NOW(), NOW())
                 ON CONFLICT (id) DO NOTHING
                 """,
                 vehicle_id,
