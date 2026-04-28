@@ -501,27 +501,7 @@ export default function HealthPage() {
           </div>
         ) : (
           <>
-            {/* Mock warning */}
-            {usedMock && (
-              <div
-                className="rounded-lg px-4 py-3 text-xs font-mono"
-                style={{
-                  background: "var(--risk-medium-bg)",
-                  border: "1px solid var(--risk-medium-border)",
-                  color: "var(--risk-medium)",
-                }}
-              >
-                ℹ Demo mode — showing simulated health data. All subsystems shown
-                as operational. Start the backend with{" "}
-                <code
-                  className="px-1 py-0.5 rounded text-[10px]"
-                  style={{ background: "var(--bg-elevated)" }}
-                >
-                  docker-compose up
-                </code>{" "}
-                to see live data.
-              </div>
-            )}
+            {/* Mock warning removed as per user request */}
 
             {/* Overall banner */}
             <div id="health-banner">
