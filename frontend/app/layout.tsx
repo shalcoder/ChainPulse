@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { AppShell } from "@/components/layout/AppShell";
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
@@ -9,7 +11,8 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "ChainPulse — AI Supply Chain Control Tower",
-  description: "Real-time AI-powered supply chain monitoring and route optimization",
+  description:
+    "Real-time AI-powered supply chain monitoring and route optimization",
 };
 
 export default function RootLayout({
@@ -18,9 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={mono.variable}>
-      <body className="bg-slate-950 text-slate-100 antialiased min-h-screen">
-        {children}
+    <html lang="en" className={mono.variable} data-theme="dark">
+      <body className="antialiased" style={{ fontFamily: "var(--font-mono)" }}>
+        <ThemeProvider>
+          <AppShell>{children}</AppShell>
+        </ThemeProvider>
       </body>
     </html>
   );

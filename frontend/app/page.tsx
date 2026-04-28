@@ -22,18 +22,29 @@ export default function Dashboard() {
   const latestDecision: RouteDecision | null = decisions[0] ?? null;
 
   const [dateDisplay, setDateDisplay] = useState("");
-  const [booted, setBooted] = useState(false);
+  const [booted, setBooted] = useState(true); // default true — no flash
+
   useEffect(() => {
     setDateDisplay(
       new Date().toLocaleDateString("en-IN", {
         weekday: "short", day: "numeric", month: "short", year: "numeric",
       }).toUpperCase()
     );
+    // Show boot screen only once per browser session
+    const alreadyBooted = sessionStorage.getItem("chainpulse-booted");
+    if (!alreadyBooted) {
+      setBooted(false);
+    }
   }, []);
 
+  function handleBootComplete() {
+    sessionStorage.setItem("chainpulse-booted", "1");
+    setBooted(true);
+  }
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#080c14] font-mono">
-      {!booted && <BootScreen onComplete={() => setBooted(true)} />}
+    <div className="flex flex-col h-full overflow-hidden font-mono" style={{ background: "var(--bg-base)" }}>
+      {!booted && <BootScreen onComplete={handleBootComplete} />}
 
       {/* ── Top bar ─────────────────────────────────────────────── */}
       <TopBar
